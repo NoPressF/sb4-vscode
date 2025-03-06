@@ -1,7 +1,0 @@
-[
-    {
-        "key": "f5",
-        "command": "command-runner.run",
-        "args": { "command": "package-and-install" }
-    }
-]
