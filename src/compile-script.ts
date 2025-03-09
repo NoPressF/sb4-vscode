@@ -28,7 +28,6 @@ export const CompileScript = {
             }
 
             const currentFilePath = activeEditor.document.uri.fsPath;
-            const fileDir = path.dirname(currentFilePath);
             const logPath = path.join(sbFolderPath, 'compile.log');
 
             const gtaVersion = context.globalState.get('selectedGtaVersion');
@@ -39,8 +38,7 @@ export const CompileScript = {
                 '--mode',
                 gtaIdentifier,
                 '--compile',
-                currentFilePath,
-                path.join(fileDir, path.basename(currentFilePath, path.extname(currentFilePath))) + '.scm'
+                currentFilePath
             ];
 
             await fs.promises.unlink(logPath).catch(() => {});
