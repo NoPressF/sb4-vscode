@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
 import { Folder } from './folder';
+import { GTA_VERSIONS } from 'gta-version';
 
 export const CompileScript = {
     registerCommandCompileScript(context: vscode.ExtensionContext) {
@@ -30,10 +31,13 @@ export const CompileScript = {
             const fileDir = path.dirname(currentFilePath);
             const logPath = path.join(sbFolderPath, 'compile.log');
 
+            const gtaVersion = context.globalState.get('selectedGtaVersion');
+            const gtaIdentifier = GTA_VERSIONS.find(version => version.label === gtaVersion)?.identifier as string;
+
             const args = [
                 '--no-splash',
                 '--mode',
-                'sa_sbl',
+                gtaIdentifier,
                 '--compile',
                 currentFilePath,
                 path.join(fileDir, path.basename(currentFilePath, path.extname(currentFilePath))) + '.scm'

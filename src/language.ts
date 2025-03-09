@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Folder } from './folder';
+import { GTA_VERSIONS } from 'gta-version';
 
 export const Language = {
     async applyColors(context: vscode.ExtensionContext): Promise<void> {
@@ -43,15 +44,24 @@ export const Language = {
     
         grammarJson.patterns = [];
     
-        const pathFunctionNames = path.join(sbFolderPath, 'data', 'sa_sbl', 'sa.json');
-        const functionNamesData = fs.readFileSync(pathFunctionNames, 'utf8');
-        const functionNames = JSON.parse(functionNamesData);
+        const selectedGtaVersion = context.globalState.get('selectedGtaVersion');
+        const gtaVersionData = GTA_VERSIONS.find(version => version.label === selectedGtaVersion);
+
+        const functionNamesFilePath = path.join(
+            sbFolderPath, 
+            'data', 
+            gtaVersionData?.identifier as string, 
+            gtaVersionData?.functionsFile as string
+        );
+
+        const functionNamesJson = fs.readFileSync(functionNamesFilePath, 'utf8');
+        const functionNamesList = JSON.parse(functionNamesJson);
     
         const functions = [];
         const classes = [];
         const methods = [];
     
-        for (const extension of functionNames.extensions) {
+        for (const extension of functionNamesList.extensions) {
             for (const command of extension.commands) {
                 const commandClass = command.class;
                 const memberClass = command.member;
