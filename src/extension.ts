@@ -1,30 +1,15 @@
 import * as vscode from 'vscode';
+import { Language } from 'language';
+import { Folder } from './folder';
+import { CompileScript } from './compile-script';
+import { ButtonGTAVersion } from 'button-gta-version';
 
 export function activate(context: vscode.ExtensionContext) {
-
-    let disposable = vscode.commands.registerCommand('sb4.selectFolder', async () => {
-        const folderUri = await vscode.window.showOpenDialog({
-            canSelectFiles: false,
-            canSelectFolders: true,
-            canSelectMany: false,
-            openLabel: 'Select SB4 Folder'
-        });
-
-        if (folderUri && folderUri[0]) {
-            const folderPath = folderUri[0].fsPath;
-
-            context.globalState.update('selectedFolderPath', folderPath);
-
-            vscode.window.showInformationMessage(`Path to SB4 folder was successfully selected.`);
-        }
-    });
-
-    context.subscriptions.push(disposable);
-
-    const savedFolderPath = context.globalState.get('selectedFolderPath');
-    if (savedFolderPath) {
-        vscode.window.showInformationMessage(`Previously selected folder: ${savedFolderPath}`);
-    }
+    Language.importPatterns(context);
+    Language.applyColors(context);
+    ButtonGTAVersion.createButtonSelectGtaVersion(context);
+    CompileScript.registerCommandCompileScript(context);
+    Folder.registerCommandSelectFolder(context);
 }
 
 export function deactivate() {}

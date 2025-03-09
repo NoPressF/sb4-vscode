@@ -1,0 +1,52 @@
+{
+    "textMateRules": [
+        {
+            "scope": "operator.sb, function.sb",
+            "settings": {
+                "foreground": "#AB76A6"
+            }
+        },
+        {
+            "scope": "variable.sb, goto_label.sb, local_variable.sb",
+            "settings": {
+                "foreground": "#98CFE6"
+            }
+        },
+        {
+            "scope": "numeric.sb",
+            "settings": {
+                "foreground": "#9ABB8F"
+            }
+        },
+        {
+            "scope": "quoted.double.sb, quoted.single.sb",
+            "settings": {
+                "foreground": "#BF815D"
+            }
+        },
+        {
+            "scope": "class.sb",
+            "settings": {
+                "foreground": "#4AAE98"
+            }
+        },
+        {
+            "scope": "method.sb, label.sb",
+            "settings": {
+                "foreground": "#DBDCAC"
+            }
+        },
+        {
+            "scope": "directive.sb",
+            "settings": {
+                "foreground": "#FFFF00"
+            }
+        },
+        {
+            "scope": "comment.line.sb, comment.block.sb", 
+            "settings": {
+                "foreground": "#6A9955"
+            }
+        }
+    ]
+}

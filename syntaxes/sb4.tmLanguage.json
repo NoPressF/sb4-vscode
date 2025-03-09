@@ -1,0 +1,50 @@
+{
+    "scopeName": "source.sb4",
+    "name": "SB",
+    "patterns": [
+        { 
+            "include": "source.sb4.functions" 
+        },
+        {
+            "match": "(?i)\\b(and|array|as|alloc|boolean|bool|break|case|cdecl|class|const|continue|dec|define|default|div|downto|else|end|enum|export|false|float|for|from|function|handle|hex|if|import|inc|int|integer|logical|longstring|mul|not|of|optional|or|random|readmem|repeat|return|shortstring|string|stdcall|sqr|switch|then|thiscall|to|true|unknown|until|var|while|writemem)\\b",
+            "name": "operator.sb"
+        },
+        {
+            "match": "[$@][A-Za-z_][A-Za-z0-9_]*",
+            "name": "variable.sb"
+        },
+        {
+            "match": "\\d+@",
+            "name": "local_variable.sb"
+        },
+        {
+            "match": "\\b\\d+(\\.\\d+)?\\b",
+            "name": "numeric.sb"
+        },
+        {
+            "match": "\"[^\"]*\"",
+            "name": "quoted.double.sb"
+        },
+        {
+            "match": "'[^']*'",
+            "name": "quoted.single.sb"
+        },
+        {
+            "match": ":[A-Za-z_][A-Za-z0-9_]*",
+            "name": "label.sb"
+        },
+        {
+            "match": "^{\\$[\\w\\d\\s]+}$",
+            "name": "directive.sb"
+        },
+        {
+            "match": "//.*",
+            "name": "comment.line.sb"
+        },
+        {
+            "begin": "/\\*",
+            "end": "\\*/",
+            "name": "comment.block.sb"
+        }
+    ]
+}

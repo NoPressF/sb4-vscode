@@ -1,29 +1,82 @@
 {
   "name": "sb4",
-  "repository": {
-  "type": "git",
-  "url": "https://github.com/NoPressF/sb4-vscode"
-  },
   "displayName": "Sanny Builder 4",
-  "description": "Replacement for sanny builder 4 editor",
-  "version": "0.0.1",
+  "description": "Extension that replaces the editor Sanny builder 4",
+  "version": "0.5.0",
   "publisher": "EOS",
+  "author": "EOS",
+  "icon": "logo.jpg",
+  "galleryBanner": {
+    "color": "#100f11",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.98.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NoPressF/sb4-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/NoPressF/sb4-vscode/issues"
+  },
   "categories": [
-    "Other"
+    "Other",
+    "Formatters"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "sb4.selectFolder",
-        "title": "Select Folder"
+        "title": "Select SB4 Folder"
+      },
+      {
+        "command": "sb4.compileScript",
+        "title": "Compile Script"
+      }
+    ],
+    "keybindings": [
+      {
+          "command": "sb4.compileScript",
+          "key": "ctrl+shift+b",
+          "mac": "cmd+shift+b",
+          "when": "editorTextFocus"
+      }
+    ],
+    "languages": [
+      {
+        "id": "sb",
+        "aliases": ["SB", "sb"],
+        "extensions": [".txt"],
+        "configuration": "./language-configuration.json" 
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sb",
+        "scopeName": "source.sb4.functions",
+        "path": "./syntaxes/sb4.tmLanguageFunctions.json",
+        "extensions": [".txt"]
+      },
+      {
+        "language": "sb",
+        "scopeName": "source.sb4",
+        "path": "./syntaxes/sb4.tmLanguage.json",
+        "extensions": [".txt"]
       }
     ]
   },
+  "keywords": [
+    "sanny builder 4",
+    "sanny builder",
+    "scm",
+    "gta",
+    "cleo"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "npm run check-types && npm run lint && node esbuild.js",
@@ -45,8 +98,6 @@
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
     "eslint": "^9.21.0",
-    "esbuild": "^0.25.0",
-    "npm-run-all": "^4.1.5",
     "typescript": "^5.7.3",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
