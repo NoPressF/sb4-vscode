@@ -7,15 +7,15 @@
             }
         },
         {
-            "scope": "variable.sb, goto_label.sb, local_variable.sb",
+            "scope": "global_variable.sb, local_variable.sb, goto_label.sb",
             "settings": {
                 "foreground": "#98CFE6"
             }
         },
         {
-            "scope": "numeric.sb",
+            "scope": "numeric.sb, object.sb, enum.sb",
             "settings": {
-                "foreground": "#9ABB8F"
+                "foreground": "#B8D7A3"
             }
         },
         {

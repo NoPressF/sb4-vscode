@@ -41,17 +41,16 @@
     ],
     "keybindings": [
       {
-          "command": "sb4.compileScript",
-          "key": "ctrl+shift+b",
-          "mac": "cmd+shift+b",
-          "when": "editorTextFocus"
+        "key": "ctrl+shift+b",
+        "command": "sb4.compileScript",
+        "when": "editorTextFocus"
       }
     ],
     "languages": [
       {
         "id": "sb",
         "aliases": ["SB", "sb"],
-        "extensions": [".txt"],
+        "extensions": [],
         "configuration": "./language-configuration.json" 
       }
     ],
@@ -60,13 +59,13 @@
         "language": "sb",
         "scopeName": "source.sb4.functions",
         "path": "./syntaxes/sb4.tmLanguageFunctions.json",
-        "extensions": [".txt"]
+        "extensions": []
       },
       {
         "language": "sb",
         "scopeName": "source.sb4",
         "path": "./syntaxes/sb4.tmLanguage.json",
-        "extensions": [".txt"]
+        "extensions": []
       }
     ]
   },

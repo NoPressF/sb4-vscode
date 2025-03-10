@@ -10,12 +10,16 @@
             "name": "operator.sb"
         },
         {
-            "match": "[$@][A-Za-z_][A-Za-z0-9_]*",
-            "name": "variable.sb"
+            "match": "[$@][A-Za-z0-9_]*",
+            "name": "global_variable.sb"
         },
         {
             "match": "\\d+@",
             "name": "local_variable.sb"
+        },
+        {
+            "match": "(?i)#[A-Z]\\w*",
+            "name": "object.sb"
         },
         {
             "match": "\\b\\d+(\\.\\d+)?\\b",
