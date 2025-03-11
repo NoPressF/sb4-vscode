@@ -58,13 +58,13 @@
       {
         "language": "sb",
         "scopeName": "source.sb4.functions",
-        "path": "./syntaxes/sb4.tmLanguageFunctions.json",
+        "path": "./syntaxes/sb4.tm-language-functions.json",
         "extensions": []
       },
       {
         "language": "sb",
         "scopeName": "source.sb4",
-        "path": "./syntaxes/sb4.tmLanguage.json",
+        "path": "./syntaxes/sb4.tm-language.json",
         "extensions": []
       }
     ]

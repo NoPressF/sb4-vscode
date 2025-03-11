@@ -6,7 +6,7 @@ import { GTA_VERSIONS } from 'gta-version';
 
 export const Language = {
     async applyColors(context: vscode.ExtensionContext): Promise<void> {
-        const colorsPath = path.join(context.extensionPath, 'syntaxes', 'sb4.tmColors.json');
+        const colorsPath = path.join(context.extensionPath, 'syntaxes', 'sb4.tm-colors.json');
 
         const colorData = fs.readFileSync(colorsPath, 'utf8');
         const colors = JSON.parse(colorData);
@@ -20,7 +20,7 @@ export const Language = {
     },
 
     async importPatterns(context: vscode.ExtensionContext) {
-        const grammarPath = path.join(context.extensionPath, 'syntaxes', 'sb4.tmLanguageFunctions.json');
+        const grammarPath = path.join(context.extensionPath, 'syntaxes', 'sb4.tm-language-functions.json');
 
         if (!fs.existsSync(grammarPath)) {
             const baseStructure = {
