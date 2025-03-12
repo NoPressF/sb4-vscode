@@ -41,6 +41,11 @@ This extension is distributed under the MIT License. For more details, see the [
 
 If you have any questions or issues, please create an issue on [GitHub](https://github.com/NoPressF/sb4-vscode/issues).
 
+## Tasks
+- [ ] Completion and Hightlight to the Classes and Methods
+- [ ] Decompile .scm
+- [ ] Improve opcodes search
+- [ ] Highlight gxt strings
 ---
 
 **Note**: This extension is unofficial and is not affiliated with the developers of Sanny Builder 4.
