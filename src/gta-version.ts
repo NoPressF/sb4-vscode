@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
 
-export const GTA_MODE: vscode.DocumentFilter = { language: 'SB', scheme: 'file' };
-
 interface GtaVersion {
     label: string;
     description: string;
@@ -14,3 +12,11 @@ export const GTA_VERSIONS: GtaVersion[] = [
     { label: 'GTA VC', description: 'Grand Theft Auto Vice City', identifier: 'vc_sbl', functionsFile: 'vc.json' },
     { label: 'GTA SA', description: 'Grand Theft Auto San Andreas', identifier: 'sa_sbl', functionsFile: 'sa.json'}
 ];
+
+export const GtaVersion = {
+    getIdentifier(context: vscode.ExtensionContext): string {
+        const gtaVersion = context.globalState.get('selectedGtaVersion');
+        const gtaIdentifier = GTA_VERSIONS.find(version => version.label === gtaVersion)?.identifier as string;
+        return gtaIdentifier;
+    }
+};

@@ -37,6 +37,10 @@
       {
         "command": "sb4.compileScript",
         "title": "Compile Script"
+      },
+      {
+        "command": "sb4.showOpcodesWindow",
+        "title": "Show Opcodes"
       }
     ],
     "keybindings": [

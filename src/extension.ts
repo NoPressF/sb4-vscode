@@ -3,7 +3,8 @@ import { Language } from 'language';
 import { Folder } from './folder';
 import { CompileScript } from './compile-script';
 import { ButtonGTAVersion } from 'button-gta-version';
-import { RegisterSearchProviders, Search } from 'search/search';
+import { RegisterSearchProviders } from 'providers/search/search';
+import { RegisterEnumProviders } from 'providers/enum/enum';
 
 export function activate(context: vscode.ExtensionContext) {
     Language.importPatterns(context);
@@ -12,6 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
     CompileScript.registerCommandCompileScript(context);
     Folder.registerCommandSelectFolder(context);
     RegisterSearchProviders.register(context);
+    RegisterEnumProviders.registerProviders(context);
 }
 
 export function deactivate() {}

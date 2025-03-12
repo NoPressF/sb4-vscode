@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GTA_MODE, GTA_VERSIONS } from 'gta-version';
+import { GTA_VERSIONS } from 'gta-version';
 
 const BUTTON_ID = "sb4.openSettings";
 const BUTTON_TOOLTIP = "Open SB4 Settings";

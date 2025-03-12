@@ -4,7 +4,7 @@ import { Search } from './search';
 export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
 
 export class ReferenceSearch implements Search {
-    registerProvider(context: vscode.ExtensionContext): void {
+    registerProvider(context: vscode.ExtensionContext) {
         const provider = vscode.languages.registerReferenceProvider(LANGUAGE_SELECTOR, {
             provideReferences: (document, position) => {
                 const wordRange = document.getWordRangeAtPosition(position);
