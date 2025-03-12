@@ -71,6 +71,12 @@
         "path": "./syntaxes/sb4.tm-language.json",
         "extensions": []
       }
+    ],
+    "snippets": [
+      {
+        "language": "sb",
+        "path": "./snippets/snippets.json"
+      }
     ]
   },
   "keywords": [
