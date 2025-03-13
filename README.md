@@ -37,10 +37,6 @@ After installing the extension, you need to specify the path to the Sanny Builde
 
 This extension is distributed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
-## Support
-
-If you have any questions or issues, please create an issue on [GitHub](https://github.com/NoPressF/sb4-vscode/issues).
-
 ## Tasks
 - [ ] Completion and Hightlight to the Classes and Methods
 - [ ] Decompile .scm
