@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
     CompileScript.registerCommandCompileScript(context);
     Folder.registerCommandSelectFolder(context);
     RegisterSearchProviders.register(context);
-    RegisterEnumProviders.registerProviders(context);
+    RegisterEnumProviders.register(context);
 }
 
 export function deactivate() {}

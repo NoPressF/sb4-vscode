@@ -57,7 +57,7 @@ export class Enum {
 }
 
 export const RegisterEnumProviders = {
-    registerProviders(context: vscode.ExtensionContext) {
+    register(context: vscode.ExtensionContext) {
         const enumInstance = new Enum();
         const enumCompletionProvider = new EnumCompletionProvider(enumInstance, context);
         const enumHoverProvider = new EnumHoverProvider(enumInstance);

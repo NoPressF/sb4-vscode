@@ -24,9 +24,9 @@ export const Language = {
 
         if (!fs.existsSync(grammarPath)) {
             const baseStructure = {
-                "scopeName": "source.sb4.functions",
-                "name": "SB",
-                "patterns": []
+                scopeName: "source.sb4.functions",
+                name: "SB",
+                patterns: []
             };
 
             fs.writeFileSync(grammarPath, JSON.stringify(baseStructure, null, 4), 'utf8');
