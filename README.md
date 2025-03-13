@@ -39,7 +39,7 @@ This extension is distributed under the MIT License. For more details, see the [
 
 ## Tasks
 - [ ] Completion and Hightlight to the Classes and Methods
-- [ ] Decompile .scm
+- [ ] Decompile script
 - [ ] Improve opcodes search
 - [ ] Highlight gxt strings
 ---
