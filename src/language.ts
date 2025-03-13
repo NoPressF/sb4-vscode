@@ -44,12 +44,16 @@ export const Language = {
 
         grammarJson.patterns = [];
 
-        const selectedGtaVersion = context.globalState.get('selectedGtaVersion');
+        let selectedGtaVersion = context.globalState.get('selectedGtaVersion') || 'GTA SA';
+
+        if (!context.globalState.get('selectedGtaVersion')) {
+            context.globalState.update('selectedGtaVersion', selectedGtaVersion);
+        }
+
         const gtaVersionData = GTA_VERSIONS.find(version => version.label === selectedGtaVersion);
 
         if (!gtaVersionData) {
-            vscode.window.showErrorMessage('Selected GTA version not found.');
-            return;
+            throw new Error(`GTA version data not found for: ${selectedGtaVersion}`);
         }
 
         const functionNamesFilePath = path.join(
@@ -99,24 +103,24 @@ export const Language = {
 
         if (functions.length > 0) {
             const functionPattern = {
-                "match": `(?i)\\b(${functions.join('|')})\\b`,
-                "name": 'function.sb'
+                match: `(?i)\\b(${functions.join('|')})\\b`,
+                name: 'function.sb'
             };
             grammarJson.patterns.push(functionPattern);
         }
 
         if (classes.length > 0) {
             const classPattern = {
-                "match": `\\b(${classes.join('|')})\\b`,
-                "name": 'class.sb'
+                match: `\\b(${classes.join('|')})\\b`,
+                name: 'class.sb'
             };
             grammarJson.patterns.push(classPattern);
         }
 
         if (methods.length > 0) {
             const methodPattern = {
-                "match": `\\b(${methods.join('|')})\\b`,
-                "name": 'method.sb'
+                match: `\\b(${methods.join('|')})\\b`,
+                name: 'method.sb'
             };
             grammarJson.patterns.push(methodPattern);
         }
