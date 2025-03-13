@@ -84,19 +84,16 @@ export const Language = {
         for (const extension of functionNamesList.extensions) {
             for (const command of extension.commands) {
                 const commandClass = command.class;
-                const memberClass = command.member;
+                const commandMember = command.member;
 
-                if (commandClass === undefined && memberClass === undefined) {
+                if (commandClass === undefined && commandMember === undefined) {
                     functions.push(command.name.toLowerCase());
                     continue;
                 }
 
-                if (commandClass !== undefined) {
+                if (commandClass !== undefined && commandMember !== undefined) {
                     classes.push(commandClass);
-                }
-
-                if (memberClass !== undefined) {
-                    methods.push(memberClass);
+                    methods.push(commandMember);
                 }
             }
         }

@@ -4,6 +4,14 @@ import * as fs from 'fs';
 import { Folder } from 'folder';
 import { GtaVersion } from 'gta-version';
 
+type CommandInfo = {
+    id: string;
+    name: string;
+    // short_desc: string;
+    // class: string | undefined;
+    // member: string | undefined;
+};
+
 export class OpcodesSearch {
     create(context: vscode.ExtensionContext) {
         const disposable = vscode.commands.registerCommand('sb4.showOpcodesWindow', () => {
@@ -26,9 +34,30 @@ export class OpcodesSearch {
 
             panel.webview.html = htmlContent;
 
-            const opcodesPath = path.join(sbFolderPath, 'data', GtaVersion.getIdentifier(context), 'opcodes.txt');
-            const opcodesContent = fs.readFileSync(opcodesPath, 'utf8');
-            const highlightedOpcodes = opcodesContent
+            const functionsFilePath = path.join(
+                sbFolderPath, 
+                'data', 
+                GtaVersion.getIdentifier(context), 
+                GtaVersion.getFunctionsFile(context)
+            );
+
+            const functionsJson = fs.readFileSync(functionsFilePath, 'utf8');
+            const functionsList = JSON.parse(functionsJson);
+            const functionsContent: string[] = [];
+
+            for (const extension of functionsList.extensions) {
+                for (const command of extension.commands) {
+                    const commandInfo: CommandInfo = { 
+                        id: command.id, 
+                        name: command.name.toLowerCase()
+                    };
+
+                    functionsContent.push(`${commandInfo.id}: ${commandInfo.name}`);
+                }
+            }
+            
+            const joinedContent = functionsContent.join('\n');
+            const highlightedOpcodes = joinedContent
                 .split('\n')
                 .map(line => this.highlightOpcodes(line))
                 .map(line => `<div class="opcode-item">${line}</div>`)
@@ -40,11 +69,8 @@ export class OpcodesSearch {
         context.subscriptions.push(disposable);
     }
     
-    highlightOpcodes(line: string): string {
-        return line
-            .replace(/\{[0-9A-F]{4}:\}/g, '<span class="opcode-address">$&</span>')
-            .replace(/ [a-zA-Z_]+(?= )/g, '<span class="opcode-name">$&</span>')
-            .replace(/\[[^\]]+\]/g, '<span class="opcode-bracket">$&</span>')
-            .replace(/\{[^}]+\}/g, '<span class="opcode-curly">$&</span>');
+    private highlightOpcodes(line: string): string {
+        return line.replace(/^([0-9A-F]{4}):\s*([\w_]+)/, 
+            '<span class="opcode-address">$1:</span> <span class="opcode-name">$2</span>');
     }
 }

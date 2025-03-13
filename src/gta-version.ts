@@ -18,5 +18,11 @@ export const GtaVersion = {
         const gtaVersion = context.globalState.get('selectedGtaVersion');
         const gtaIdentifier = GTA_VERSIONS.find(version => version.label === gtaVersion)?.identifier as string;
         return gtaIdentifier;
+    },
+
+    getFunctionsFile(context: vscode.ExtensionContext) {
+        const gtaVersion = context.globalState.get('selectedGtaVersion');
+        const gtaFunctionsFile = GTA_VERSIONS.find(version => version.label === gtaVersion)?.functionsFile as string;
+        return gtaFunctionsFile;
     }
 };
