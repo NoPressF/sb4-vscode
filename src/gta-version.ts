@@ -10,7 +10,7 @@ interface GtaVersion {
 export const GTA_VERSIONS: GtaVersion[] = [
     { label: 'GTA III', description: 'Grand Theft Auto III', identifier: 'gta3_sbl', functionsFile: 'gta3.json' },
     { label: 'GTA VC', description: 'Grand Theft Auto Vice City', identifier: 'vc_sbl', functionsFile: 'vc.json' },
-    { label: 'GTA SA', description: 'Grand Theft Auto San Andreas', identifier: 'sa_sbl', functionsFile: 'sa.json'}
+    { label: 'GTA SA', description: 'Grand Theft Auto San Andreas', identifier: 'sa_sbl', functionsFile: 'sa.json' }
 ];
 
 export const GtaVersion = {

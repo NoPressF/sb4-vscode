@@ -50,8 +50,8 @@ export const DeCompileScript = {
                 '--decompile',
                 decompilePath
             ];
-        
-            await fs.promises.unlink(logPath).catch(() => {});
+
+            await fs.promises.unlink(logPath).catch(() => { });
 
             vscode.window.withProgress({
                 location: vscode.ProgressLocation.Window,

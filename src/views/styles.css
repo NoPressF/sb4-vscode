@@ -1,0 +1,78 @@
+body {
+    font-family: 'Consolas', monospace;
+    padding: 20px;
+    background: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+}
+.opcode-list {
+    max-height: 80vh;
+    overflow-y: auto;
+    background: var(--vscode-input-background);
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-input-background);
+}
+.opcode-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px;
+    margin: 5px 0;
+    background: var(--vscode-input-background);
+    border-radius: 4px;
+    border: 1px solid var(--vscode-input-border);
+}
+.opcode-address {
+    color: #569CD6;
+}
+.opcode-type {
+    color: #C586C0;
+}
+.opcode-name {
+    color: #DCDCAA;
+}
+.opcode-param-name {
+    color: #9CDCFE;
+}
+.opcode-param-type {
+    color: #4EC9B0;   
+}
+.input-container {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.input-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--vscode-editor-foreground);
+}
+.input-with-text {
+    display: flex;
+    align-items: center;
+}
+.input-with-text input {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+    background: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    box-sizing: border-box;
+}
+.input-with-text input:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+.opcode-matches {
+    display: none;
+    margin-left: 10px;
+    color: var(--vscode-editor-foreground);
+}
+.no-results {
+    display: none;
+    color: var(--vscode-errorForeground);
+}

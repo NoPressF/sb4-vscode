@@ -18,4 +18,4 @@ export function activate(context: vscode.ExtensionContext) {
     RegisterEnumProviders.register(context);
 }
 
-export function deactivate() {}
+export function deactivate() { }

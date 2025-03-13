@@ -4,7 +4,7 @@ import { Enum } from '../enum';
 export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
 
 export class EnumHoverProvider implements vscode.HoverProvider {
-    constructor(private enumInstance: Enum) {}
+    constructor(private enumInstance: Enum) { }
 
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
         const wordRange = document.getWordRangeAtPosition(position, /\b[\w\.]+\b/);

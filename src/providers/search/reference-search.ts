@@ -21,15 +21,15 @@ export class ReferenceSearch implements Search {
         const regex = new RegExp(label, 'gm');
         const text = document.getText();
         const locations = [];
-    
+
         let match;
         while ((match = regex.exec(text)) !== null) {
             const line = document.lineAt(document.positionAt(match.index).line);
             const labelPosition = line.text.indexOf(label);
-            
+
             locations.push(new vscode.Location(document.uri, new vscode.Position(line.lineNumber, labelPosition)));
         }
-    
+
         return locations;
     }
 }

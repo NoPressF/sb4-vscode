@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{cssUri}}">
+</head>
+<body>
+    <h1>Opcodes List</h1>
+    <div class="input-container">
+        <label for="opcode-filter">Filter Opcodes:</label>
+        <div class="input-with-text">
+            <input type="text" id="opcode-filter" placeholder="Enter opcode name or address or something else...">
+            <span class="opcode-matches">Matches: 0</span>
+        </div>
+    </div>
+    <div class="no-results" id="no-results">No results</div>
+    <div class="opcode-list" id="opcode-list"></div>
+    <script src="{{jsUri}}"></script>
+</body>
+</html>

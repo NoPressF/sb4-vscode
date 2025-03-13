@@ -39,7 +39,7 @@ export const CompileScript = {
                 currentFilePath
             ];
 
-            await fs.promises.unlink(logPath).catch(() => {});
+            await fs.promises.unlink(logPath).catch(() => { });
 
             vscode.window.withProgress({
                 location: vscode.ProgressLocation.Window,
