@@ -4,6 +4,7 @@ body {
     background: var(--vscode-editor-background);
     color: var(--vscode-editor-foreground);
 }
+
 .opcode-list {
     max-height: 80vh;
     overflow-y: auto;
@@ -14,6 +15,7 @@ body {
     box-sizing: border-box;
     scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-input-background);
 }
+
 .opcode-item {
     display: flex;
     justify-content: space-between;
@@ -24,35 +26,43 @@ body {
     border-radius: 4px;
     border: 1px solid var(--vscode-input-border);
 }
+
 .opcode-address {
     color: #569CD6;
 }
 .opcode-type {
     color: #C586C0;
 }
+
 .opcode-name {
     color: #DCDCAA;
 }
+
 .opcode-param-name {
     color: #9CDCFE;
 }
+
 .opcode-param-type {
     color: #4EC9B0;   
 }
+
 .input-container {
     margin-top: 20px;
     margin-bottom: 10px;
 }
+
 .input-container label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
     color: var(--vscode-editor-foreground);
 }
+
 .input-with-text {
     display: flex;
     align-items: center;
 }
+
 .input-with-text input {
     flex: 1;
     padding: 8px;
@@ -63,16 +73,64 @@ body {
     color: var(--vscode-input-foreground);
     box-sizing: border-box;
 }
+
 .input-with-text input:focus {
     outline: none;
     border-color: var(--vscode-focusBorder);
+    box-shadow: 0 0 0 0.5px var(--vscode-focusBorder);
 }
+
 .opcode-matches {
     display: none;
     margin-left: 10px;
     color: var(--vscode-editor-foreground);
 }
+
 .no-results {
     display: none;
     color: var(--vscode-errorForeground);
+}
+
+.combobox-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-family: 'Consolas', monospace;
+    color: var(--vscode-editor-foreground);
+}
+
+.select {
+    width: 10%;
+    padding: 8px;
+    font-size: 13px;
+    font-family: 'Consolas', monospace;
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23cccccc" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.select:focus {
+    border-color: var(--vscode-focusBorder);
+    outline: none;
+    box-shadow: 0 0 0 0.5px var(--vscode-focusBorder);
+}
+
+.select option {
+    padding: 8px;
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+}
+
+.select option:hover {
+    background-color: var(--vscode-editor-background);
 }

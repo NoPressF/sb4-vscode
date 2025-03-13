@@ -34,10 +34,6 @@ function filterOpcodes(searchText) {
     }
 }
 
-filterInput.addEventListener('input', (event) => {
-    filterOpcodes(event.target.value.toLowerCase());
-});
-
 function setOpcodes(opcodes) {
     opcodeList.innerHTML = opcodes;
     filterOpcodes('');
@@ -49,6 +45,10 @@ function focusOnInputField() {
         inputElement.focus();
     }
 }
+
+filterInput.addEventListener('input', (event) => {
+    filterOpcodes(event.target.value.toLowerCase());
+});
 
 window.addEventListener('load', () => {
     focusOnInputField();
