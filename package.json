@@ -39,6 +39,10 @@
         "title": "Compile Script"
       },
       {
+        "command": "sb4.decompileScript",
+        "title": "Decompile Script"
+      },
+      {
         "command": "sb4.showOpcodesWindow",
         "title": "Show Opcodes"
       }

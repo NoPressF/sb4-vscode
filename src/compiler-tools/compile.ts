@@ -3,11 +3,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
-import { Folder } from './folder';
+import { Folder } from '../folder';
 import { GtaVersion } from 'gta-version';
+import { CompilerTools } from './compiler-tools';
 
 export const CompileScript = {
-    registerCommandCompileScript(context: vscode.ExtensionContext) {
+    registerComman(context: vscode.ExtensionContext) {
 
         const diagnosticCollection = vscode.languages.createDiagnosticCollection('sb4-compiler');
         context.subscriptions.push(diagnosticCollection);
@@ -42,7 +43,7 @@ export const CompileScript = {
 
             vscode.window.withProgress({
                 location: vscode.ProgressLocation.Window,
-                title: "Building",
+                title: 'Compiling',
                 cancellable: false
             }, async () => {
                 return new Promise<void>(async (resolve, reject) => {
@@ -56,11 +57,11 @@ export const CompileScript = {
                             const content = iconv.decode(buffer, 'win1251');
 
                             if (content.trim() === '') {
-                                vscode.window.showInformationMessage('✅ Building succeeded');
+                                vscode.window.showInformationMessage('✅ Compiling succeeded');
                             } else {
-                                const diagnostics = createFileLevelDiagnostics(content);
+                                const diagnostics = CompilerTools.createFileLevelDiagnostics(content);
                                 diagnosticCollection.set(vscode.Uri.file(currentFilePath), diagnostics);
-                                vscode.window.showErrorMessage(`Building failed:\n${content}`);
+                                vscode.window.showErrorMessage(`Compiling failed:\n${content}`);
                             }
 
                             await fs.promises.unlink(logPath);
@@ -69,7 +70,7 @@ export const CompileScript = {
                             const error = err as NodeJS.ErrnoException;
                             if (error.code === 'ENOENT') {
                                 diagnosticCollection.clear();
-                                vscode.window.showInformationMessage('✅ Building succeeded');
+                                vscode.window.showInformationMessage('✅ Compiling succeeded');
                                 resolve();
                             } else {
                                 vscode.window.showErrorMessage(`Failed to read log file: ${error.message}`);
@@ -91,25 +92,6 @@ export const CompileScript = {
     }
 };
 
-function createFileLevelDiagnostics(errorMessage: string): vscode.Diagnostic[] {
-    const diagnostics: vscode.Diagnostic[] = [];
-
-    const regex = /error:\s(.+):(\d+)\s(.*)/g;
-    const matches = [...errorMessage.matchAll(regex)];
-
-    if (matches.length > 0) {
-        const [, file, lineStr, message] = matches[0];
-        const lineNumber = parseInt(lineStr, 10);
-
-        const range = new vscode.Range(lineNumber, 0, lineNumber, Number.MAX_SAFE_INTEGER);
-
-        const diagnostic = new vscode.Diagnostic(range, message, vscode.DiagnosticSeverity.Error);
-        diagnostics.push(diagnostic);
-    } else {
-        const range = new vscode.Range(0, 0, 0, 0);
-        const diagnostic = new vscode.Diagnostic(range, errorMessage, vscode.DiagnosticSeverity.Error);
-        diagnostics.push(diagnostic);
-    }
-
-    return diagnostics;
+function createFileLevelDiagnostics(content: string) {
+    throw new Error('Function not implemented.');
 }
