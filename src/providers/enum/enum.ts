@@ -17,7 +17,9 @@ export class Enum {
 
     loadEnums(context: vscode.ExtensionContext) {
         const sbFolderPath = context.globalState.get('selectedSB4FolderPath') as string;
-        if (!sbFolderPath) return;
+        if (!sbFolderPath) {
+            return;
+        }
 
         const enumsPath = path.join(sbFolderPath, 'data', GtaVersion.getIdentifier(context), 'enums.txt');
         const content = fs.readFileSync(enumsPath, 'utf-8');

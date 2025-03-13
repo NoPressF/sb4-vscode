@@ -11,7 +11,9 @@ export class EnumCompletionProvider implements vscode.CompletionItemProvider {
     provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
         const linePrefix = document.getText(new vscode.Range(position.line, 0, position.line, position.character));
         const enumUsageMatch = linePrefix.match(/(\w+)\.$/i);
-        if (!enumUsageMatch) return;
+        if (!enumUsageMatch) {
+            return;
+        }
 
         const enumName = enumUsageMatch[1];
         return this.getEnumValues(enumName);
@@ -19,7 +21,9 @@ export class EnumCompletionProvider implements vscode.CompletionItemProvider {
 
     private getEnumValues(enumName: string): vscode.CompletionItem[] {
         const enumInfo = this.enumInstance.enums.get(enumName);
-        if (!enumInfo) return [];
+        if (!enumInfo) {
+            return [];
+        }
 
         return enumInfo.elements.map(element => {
             const item = new vscode.CompletionItem(element.name, vscode.CompletionItemKind.EnumMember);

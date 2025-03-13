@@ -8,18 +8,26 @@ export class EnumHoverProvider implements vscode.HoverProvider {
 
     provideHover(document: vscode.TextDocument, position: vscode.Position) {
         const wordRange = document.getWordRangeAtPosition(position, /\b[\w\.]+\b/);
-        if (!wordRange) return;
+        if (!wordRange) {
+            return;
+        }
 
         const word = document.getText(wordRange);
         const [enumName, elementName] = word.split('.');
 
-        if (!elementName || !enumName) return;
+        if (!elementName || !enumName) {
+            return;
+        }
 
         const enumInfo = this.enumInstance.enums.get(enumName);
-        if (!enumInfo) return;
+        if (!enumInfo) {
+            return;
+        }
 
         const element = enumInfo.elements.find(e => e.name === elementName);
-        if (!element) return;
+        if (!element) {
+            return;
+        }
 
         const contents = new vscode.MarkdownString();
         contents.appendMarkdown(`**${enumName}.${elementName}**\n\n`);
