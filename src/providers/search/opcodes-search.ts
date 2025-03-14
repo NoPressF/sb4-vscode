@@ -107,7 +107,7 @@ export class OpcodesSearch {
     private readJsonFile = (filePath: string): any => {
         const fileContent = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(fileContent);
-    }
+    };
 
     private getNormalizedVar(source: string): string {
         return VAR_NOTATIONS[source] || source;
@@ -125,7 +125,7 @@ export class OpcodesSearch {
 
                 let commandInfo: CommandInfo = {};
 
-                if (this.searchType == SearchType.OPCODES) {
+                if (this.searchType === SearchType.OPCODES) {
                     commandInfo = {
                         id: command.id,
                         name: command.name.toLowerCase()
@@ -160,13 +160,13 @@ export class OpcodesSearch {
         let commandString = '';
         let space = ' ';
 
-        if (this.searchType == SearchType.OPCODES) {
+        if (this.searchType === SearchType.OPCODES) {
             commandString = `${commandInfo.id}: `;
         }
 
         commandString += commandIO.output || '';
 
-        if (this.searchType == SearchType.OPCODES) {
+        if (this.searchType === SearchType.OPCODES) {
             commandString += `${commandInfo.name}`;
         }
         else {
@@ -181,19 +181,19 @@ export class OpcodesSearch {
 
     private processCommandArgs(input?: CommandArgs[], output?: CommandArgs[]): CommandIO {
         const io: CommandIO = {};
-        const inputSeparator = this.searchType == SearchType.OPCODES ? ' ' : ', ';
+        const inputSeparator = this.searchType === SearchType.OPCODES ? ' ' : ', ';
 
         if (input) {
             const inputMap = input.map(this.formatInputArg).join(inputSeparator);
 
-            if (this.searchType == SearchType.OPCODES) {
+            if (this.searchType === SearchType.OPCODES) {
                 io.input = inputMap;
             }
             else {
                 io.input = `(${inputMap})`;
             }
         } else {
-            if (this.searchType == SearchType.CLASSES_AND_MEMBERS) {
+            if (this.searchType === SearchType.CLASSES_AND_MEMBERS) {
                 io.input = '()';
             }
         }
@@ -208,7 +208,7 @@ export class OpcodesSearch {
     private formatInputArg = (args: CommandArgs): string => {
         let { name, type, source } = args;
 
-        if (this.searchType == SearchType.OPCODES) {
+        if (this.searchType === SearchType.OPCODES) {
             name = name ? `{${name}}` : '';
             type = type ? `[${type}]` : '';
             source = source || '';
@@ -220,12 +220,12 @@ export class OpcodesSearch {
 
             return name;
         }
-    }
+    };
 
     private formatOutputArg = (args: CommandArgs): string => {
         let { name = '', type = '', source = '' } = args;
 
-        if (this.searchType == SearchType.OPCODES) {
+        if (this.searchType === SearchType.OPCODES) {
             name = name.trim() !== '' ? `{${name}}: ` : '';
             source = `${this.getNormalizedVar(source)} `;
             return `[${source}${name}${type}]`;
@@ -242,7 +242,7 @@ export class OpcodesSearch {
 
         const isLineThrough: boolean = commandInfo.isUnsupported || false;
 
-        if (this.searchType == SearchType.OPCODES) {
+        if (this.searchType === SearchType.OPCODES) {
             newLine = newLine.replace(/^[0-9A-F]{4}:/g, (match: string) => {
                 return `<span class="opcode-address">${match}</span>`;
             });
