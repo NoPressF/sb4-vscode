@@ -99,7 +99,7 @@ body {
     color: var(--vscode-editor-foreground);
 }
 
-.select {
+.display-type-select {
     width: 10%;
     padding: 8px;
     font-size: 13px;
@@ -119,18 +119,18 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.select:focus {
+.display-type-select:focus {
     border-color: var(--vscode-focusBorder);
     outline: none;
     box-shadow: 0 0 0 0.5px var(--vscode-focusBorder);
 }
 
-.select option {
+.display-type-select option {
     padding: 8px;
     background-color: var(--vscode-editor-background);
     color: var(--vscode-editor-foreground);
 }
 
-.select option:hover {
+.seledisplay-type-selectct option:hover {
     background-color: var(--vscode-editor-background);
 }

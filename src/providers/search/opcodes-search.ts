@@ -18,6 +18,7 @@ type CommandIO = {
 type CommandInfo = {
     id: string;
     name: string;
+    isUnsupported?: boolean;
 };
 
 const VAR_NOTATIONS: Record<string, string> = {
@@ -25,6 +26,8 @@ const VAR_NOTATIONS: Record<string, string> = {
     'var_global': 'global var',
     'var_local': 'local var'
 };
+
+const LINE_THROUGH_REGEX = /<\/?s>/g;
 
 export class OpcodesSearch {
     create(context: vscode.ExtensionContext) {
@@ -117,6 +120,10 @@ export class OpcodesSearch {
                     name: command.name.toLowerCase()
                 };
 
+                if (command.attrs && command.attrs.is_unsupported) {
+                    commandInfo.isUnsupported = command.attrs.is_unsupported;
+                }
+
                 const commandIO = this.processCommandArgs(command.input, command.output);
                 const commandString = this.formatCommandString(commandInfo, commandIO);
 
@@ -132,6 +139,10 @@ export class OpcodesSearch {
 
         commandString += commandIO.output || '';
         commandString += `${commandInfo.name} ${commandIO.input || ''}`;
+
+        if (commandInfo.isUnsupported) {
+            commandString = '<s>' + commandString + '</s>';
+        }
 
         return commandString;
     }
@@ -164,15 +175,22 @@ export class OpcodesSearch {
         const { name = '', type = '', source = '' } = args;
 
         const sourcePart = `${this.getNormalizedVar(source)} `;
-        const namePart = name.trim() != "" ? `{${name}}: ` : '';
+        const namePart = name.trim() !== "" ? `{${name}}: ` : '';
 
         return `[${sourcePart}${namePart}${type}]`;
-    }
+    };
 
     private highlightOpcodes(line: string): string {
-        let newLine: string;
+        let newLine: string = line;
+
+        let isLineThrough: boolean = false;
+
+        if (LINE_THROUGH_REGEX.test(line)) {
+            newLine = line.replace(LINE_THROUGH_REGEX, "");
+            isLineThrough = true;
+        }
     
-        newLine = line.replace(/^([0-9A-F]{4}:)/g, (match: string) => {
+        newLine = newLine.replace(/^[0-9A-F]{4}:/g, (match: string) => {
             return `<span class="opcode-address">${match}</span>`;
         });
     
@@ -198,6 +216,10 @@ export class OpcodesSearch {
             return `<span class="opcode-param-type">${match}</span>`;
         });
     
+        if (isLineThrough) {
+            newLine = '<s>' + newLine + '</s>';
+        }
+
         return newLine;
     }
 
