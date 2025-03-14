@@ -2,7 +2,7 @@ const opcodeList = document.getElementById('opcode-list');
 const filterInput = document.getElementById('opcode-filter');
 const noResultsMessage = document.getElementById('no-results');
 const opcodeMatches = document.querySelector('.opcode-matches');
-const displayTypeSelect = document.getElementById('display-type-select');
+const searchDisplayType = document.getElementById('search-display-type');
 const vscode = acquireVsCodeApi();
 
 function filterOpcodes(searchText) {
@@ -36,7 +36,7 @@ function filterOpcodes(searchText) {
     }
 }
 
-function setOpcodes(opcodes) {
+function updateOpcodes(opcodes) {
     opcodeList.innerHTML = opcodes;
     filterOpcodes('');
 }
@@ -52,11 +52,11 @@ filterInput.addEventListener('input', (event) => {
     filterOpcodes(event.target.value.toLowerCase());
 });
 
-displayTypeSelect.addEventListener('change', function() {
-    const selectedDisplayType = this.value;
+searchDisplayType.addEventListener('change', function () {
+    const type = this.value;
     vscode.postMessage({
-        command: 'updateDisplayType',
-        displayType: selectedDisplayType
+        command: 'updateSearchType',
+        type: type
     });
 });
 
@@ -66,7 +66,7 @@ window.addEventListener('load', () => {
 
 window.addEventListener('message', (event) => {
     const message = event.data;
-    if (message.command === 'setOpcodes') {
-        setOpcodes(message.opcodes);
+    if (message.command === 'updateOpcodes') {
+        updateOpcodes(message.content);
     }
 });

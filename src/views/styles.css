@@ -9,11 +9,14 @@ body {
     max-height: 80vh;
     overflow-y: auto;
     background: var(--vscode-input-background);
-    padding: 8px;
     border-radius: 4px;
     width: 100%;
     box-sizing: border-box;
     scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-input-background);
+}
+
+.opcode-list:not(:empty) {
+    padding: 8px;
 }
 
 .opcode-item {
@@ -30,20 +33,28 @@ body {
 .opcode-address {
     color: #569CD6;
 }
-.opcode-type {
+
+.opcode-class {
+    color: #4EC9B0;
+}
+
+.opcode-type,
+.opcode-return-type {
     color: #C586C0;
 }
 
-.opcode-name {
+.opcode-name,
+.opcode-member {
     color: #DCDCAA;
 }
 
-.opcode-param-name {
+.opcode-param-name,
+.opcode-params {
     color: #9CDCFE;
 }
 
 .opcode-param-type {
-    color: #4EC9B0;   
+    color: #4EC9B0;
 }
 
 .input-container {
@@ -99,7 +110,7 @@ body {
     color: var(--vscode-editor-foreground);
 }
 
-.display-type-select {
+.search-display-type {
     width: 170px;
     padding: 8px;
     font-size: 13px;
@@ -119,18 +130,18 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.display-type-select:focus {
+.search-display-type:focus {
     border-color: var(--vscode-focusBorder);
     outline: none;
     box-shadow: 0 0 0 0.5px var(--vscode-focusBorder);
 }
 
-.display-type-select option {
+.search-display-type option {
     padding: 8px;
     background-color: var(--vscode-editor-background);
     color: var(--vscode-editor-foreground);
 }
 
-.seledisplay-type-selectct option:hover {
+.search-display-type option:hover {
     background-color: var(--vscode-editor-background);
 }
