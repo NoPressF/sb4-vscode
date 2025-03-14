@@ -54,15 +54,6 @@ export class OpcodesSearch {
         return context.globalState.get('selectedSB4FolderPath') as string;
     }
 
-    private createWebviewPanel(): vscode.WebviewPanel {
-        return vscode.window.createWebviewPanel(
-            'opcodesView',
-            'Opcodes',
-            vscode.ViewColumn.One,
-            { enableScripts: true }
-        );
-    }
-
     private getHTMLContent(panel: vscode.WebviewPanel, context: vscode.ExtensionContext): string {
         const htmlPath = this.getWebviewPath(context, 'index.html');
         const htmlContent = fs.readFileSync(htmlPath, 'utf8');
@@ -90,14 +81,15 @@ export class OpcodesSearch {
             GtaVersion.getIdentifier(context),
             GtaVersion.getFunctionsFile(context)
         );
-
+    
         const functionsList = this.readJsonFile(functionsFilePath);
         const functionsContent = this.processCommands(functionsList);
-
+    
         return functionsContent
-            .split('\n')
-            .map(line => this.highlightOpcodes(line))
-            .map(line => `<div class="opcode-item">${line}</div>`)
+            .map(({ commandInfo, commandString }) => {
+                const highlightedLine = this.highlightOpcodes(commandString, commandInfo);
+                return `<div class="opcode-item">${highlightedLine}</div>`;
+            })
             .join('');
     }
 
@@ -110,39 +102,35 @@ export class OpcodesSearch {
         return VAR_NOTATIONS[source] || source;
     }
 
-    private processCommands(functionsList: any): string {
-        const functionsContent: string[] = [];
-
+    private processCommands(functionsList: any): { commandInfo: CommandInfo, commandString: string }[] {
+        const functionsContent: { commandInfo: CommandInfo, commandString: string }[] = [];
+    
         for (const extension of functionsList.extensions) {
             for (const command of extension.commands) {
                 const commandInfo: CommandInfo = {
                     id: command.id,
                     name: command.name.toLowerCase()
                 };
-
+    
                 if (command.attrs && command.attrs.is_unsupported) {
                     commandInfo.isUnsupported = command.attrs.is_unsupported;
                 }
-
+    
                 const commandIO = this.processCommandArgs(command.input, command.output);
                 const commandString = this.formatCommandString(commandInfo, commandIO);
-
-                functionsContent.push(commandString);
+    
+                functionsContent.push({ commandInfo, commandString });
             }
         }
-
-        return functionsContent.join('\n');
+    
+        return functionsContent;
     }
-
+    
     private formatCommandString(commandInfo: CommandInfo, commandIO: CommandIO): string {
         let commandString = `${commandInfo.id}: `;
 
         commandString += commandIO.output || '';
         commandString += `${commandInfo.name} ${commandIO.input || ''}`;
-
-        if (commandInfo.isUnsupported) {
-            commandString = '<s>' + commandString + '</s>';
-        }
 
         return commandString;
     }
@@ -180,15 +168,10 @@ export class OpcodesSearch {
         return `[${sourcePart}${namePart}${type}]`;
     };
 
-    private highlightOpcodes(line: string): string {
+    private highlightOpcodes(line: string, commandInfo: CommandInfo): string {
         let newLine: string = line;
-
-        let isLineThrough: boolean = false;
-
-        if (LINE_THROUGH_REGEX.test(line)) {
-            newLine = line.replace(LINE_THROUGH_REGEX, "");
-            isLineThrough = true;
-        }
+    
+        const isLineThrough: boolean = commandInfo.isUnsupported || false;
     
         newLine = newLine.replace(/^[0-9A-F]{4}:/g, (match: string) => {
             return `<span class="opcode-address">${match}</span>`;
@@ -211,7 +194,7 @@ export class OpcodesSearch {
         newLine = newLine.replace(/(\{\w+\})/g, (match: string) => {
             return `<span class="opcode-param-name">${match}</span>`;
         });
-
+    
         newLine = newLine.replace(/(\[\w+\])/g, (match: string) => {
             return `<span class="opcode-param-type">${match}</span>`;
         });
@@ -219,8 +202,17 @@ export class OpcodesSearch {
         if (isLineThrough) {
             newLine = '<s>' + newLine + '</s>';
         }
-
+    
         return newLine;
+    }
+
+    private createWebviewPanel(): vscode.WebviewPanel {
+        return vscode.window.createWebviewPanel(
+            'opcodesView',
+            'Opcodes',
+            vscode.ViewColumn.One,
+            { enableScripts: true }
+        );
     }
 
     private setupPanel(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, htmlContent: string, highlightedOpcodes: string): void {
