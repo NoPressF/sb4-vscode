@@ -2,6 +2,8 @@ const opcodeList = document.getElementById('opcode-list');
 const filterInput = document.getElementById('opcode-filter');
 const noResultsMessage = document.getElementById('no-results');
 const opcodeMatches = document.querySelector('.opcode-matches');
+const displayTypeSelect = document.getElementById('display-type-select');
+let selectedDisplayType;
 
 function filterOpcodes(searchText) {
     const items = opcodeList.querySelectorAll('.opcode-item');
@@ -48,6 +50,10 @@ function focusOnInputField() {
 
 filterInput.addEventListener('input', (event) => {
     filterOpcodes(event.target.value.toLowerCase());
+});
+
+displayTypeSelect.addEventListener('change', function() {
+    selectedDisplayType = this.value;
 });
 
 window.addEventListener('load', () => {
