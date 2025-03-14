@@ -52,7 +52,7 @@ export class OpcodesSearch {
                 return;
             }
 
-            const panel = this.createWebviewPanel();
+            const panel = this.createWebviewPanel(context);
             const htmlContent = this.getHTMLContent(panel, context);
 
             this.setupPanel(context, panel, htmlContent, sb4FolderPath);
@@ -82,7 +82,11 @@ export class OpcodesSearch {
     }
 
     private getWebviewUri(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, fileName: string): vscode.Uri {
-        return panel.webview.asWebviewUri(vscode.Uri.file(this.getWebviewPath(context, fileName)));
+        return panel.webview.asWebviewUri(this.getFileUri(this.getWebviewPath(context, fileName)));
+    }
+
+    private getFileUri(path: string): vscode.Uri {
+        return vscode.Uri.file(path);
     }
 
     private getOpcodesContent(context: vscode.ExtensionContext, sb4FolderPath: string): string {
@@ -300,18 +304,21 @@ export class OpcodesSearch {
         return newLine;
     }
 
-    private createWebviewPanel(): vscode.WebviewPanel {
+    private createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPanel {
         return vscode.window.createWebviewPanel(
             'Search Opcodes View',
             'Search Opcodes',
             vscode.ViewColumn.One,
-            { enableScripts: true }
+            {
+                enableScripts: true,
+                localResourceRoots: [this.getFileUri(path.join(context.extensionPath, 'src', 'views'))]
+            }
         );
     }
 
     private setupPanel(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, htmlContent: string, sb4FolderPath: string): void {
 
-        const iconPath = vscode.Uri.file(context.asAbsolutePath('logo.jpg'));
+        const iconPath = this.getFileUri(context.asAbsolutePath('logo.jpg'));
 
         panel.webview.html = htmlContent;
 
