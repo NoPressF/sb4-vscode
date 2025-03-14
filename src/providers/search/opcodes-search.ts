@@ -27,11 +27,9 @@ const VAR_NOTATIONS: Record<string, string> = {
     'var_local': 'local var'
 };
 
-const LINE_THROUGH_REGEX = /<\/?s>/g;
-
 export class OpcodesSearch {
     create(context: vscode.ExtensionContext) {
-        const disposable = vscode.commands.registerCommand('sb4.showOpcodesWindow', () => {
+        const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', () => {
             const sbFolderPath = this.getSB4FolderPath(context);
 
             if (!sbFolderPath) {
@@ -208,8 +206,8 @@ export class OpcodesSearch {
 
     private createWebviewPanel(): vscode.WebviewPanel {
         return vscode.window.createWebviewPanel(
-            'opcodesView',
-            'Opcodes',
+            'Search Opcodes View',
+            'Search Opcodes',
             vscode.ViewColumn.One,
             { enableScripts: true }
         );
@@ -233,6 +231,14 @@ export class OpcodesSearch {
         panel.onDidChangeViewState(e => {
             if (e.webviewPanel.visible) {
                 sendOpcodesToWebview(highlightedOpcodes);
+            }
+        });
+
+        panel.webview.onDidReceiveMessage((message) => {
+            switch (message.command) {
+                case 'updateDisplayType':
+                    const selectedDisplayType = message.displayType;
+                    break;
             }
         });
 

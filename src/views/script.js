@@ -3,7 +3,7 @@ const filterInput = document.getElementById('opcode-filter');
 const noResultsMessage = document.getElementById('no-results');
 const opcodeMatches = document.querySelector('.opcode-matches');
 const displayTypeSelect = document.getElementById('display-type-select');
-let selectedDisplayType;
+const vscode = acquireVsCodeApi();
 
 function filterOpcodes(searchText) {
     const items = opcodeList.querySelectorAll('.opcode-item');
@@ -53,7 +53,11 @@ filterInput.addEventListener('input', (event) => {
 });
 
 displayTypeSelect.addEventListener('change', function() {
-    selectedDisplayType = this.value;
+    const selectedDisplayType = this.value;
+    vscode.postMessage({
+        command: 'updateDisplayType',
+        displayType: selectedDisplayType
+    });
 });
 
 window.addEventListener('load', () => {

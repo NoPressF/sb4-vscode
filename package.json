@@ -43,7 +43,7 @@
         "title": "Decompile Script"
       },
       {
-        "command": "sb4.showOpcodesWindow",
+        "command": "sb4.searchOpcodes",
         "title": "Show Opcodes"
       }
     ],
@@ -51,6 +51,11 @@
       {
         "key": "ctrl+shift+b",
         "command": "sb4.compileScript",
+        "when": "editorTextFocus"
+      },
+      {
+        "key": "ctrl+alt+2",
+        "command": "sb4.searchOpcodes",
         "when": "editorTextFocus"
       }
     ],
