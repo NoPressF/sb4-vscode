@@ -11,8 +11,8 @@ export function activate(context: vscode.ExtensionContext) {
     Language.importPatterns(context);
     Language.applyColors(context);
     ButtonGTAVersion.createButtonSelectGtaVersion(context);
-    CompileScript.registerComman(context);
-    DeCompileScript.registerCommander(context);
+    CompileScript.registerCommand(context);
+    DeCompileScript.registerCommand(context);
     Folder.registerCommandSelectFolder(context);
     RegisterSearchProviders.register(context);
     RegisterEnumProviders.register(context);

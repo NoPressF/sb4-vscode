@@ -8,7 +8,7 @@ import { GtaVersion } from 'gta-version';
 import { CompilerTools } from './compiler-tools';
 
 export const DeCompileScript = {
-    registerCommander(context: vscode.ExtensionContext) {
+    registerCommand(context: vscode.ExtensionContext) {
 
         const diagnosticCollection = vscode.languages.createDiagnosticCollection('sb4-compiler');
         context.subscriptions.push(diagnosticCollection);
