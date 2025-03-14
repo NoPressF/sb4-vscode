@@ -29,9 +29,13 @@ After installing the extension, you need to specify the path to the Sanny Builde
 
 ### Compiling a Script
 
-1. Open your script in VS Code.
-2. Press `Ctrl + Shift + B` or open the Command Palette (`Ctrl + Shift + P`) and type `Compile Script`.
-3. The extension will compile your script using Sanny Builder 4.
+1. Press `Ctrl + Shift + B` or open the Command Palette (`Ctrl + Shift + P`) and type `Compile Script`.
+2. The extension will compile your script using Sanny Builder 4.
+
+### Search opcodes
+
+1. Press `Ctrl + Alt + 2` or open the Command Palette (`Ctrl + Shift + P`) and type `Search opcodes`.
+2. You can choose one of two display types (``Opcodes and Classes and Members``)
 
 ## License
 
