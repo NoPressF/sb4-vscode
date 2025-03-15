@@ -1,12 +1,22 @@
 import * as vscode from 'vscode';
 import { Enum } from '../enum';
+import { Singleton } from 'singleton';
 
 export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
 
-export class EnumHoverProvider implements vscode.HoverProvider {
-    constructor(private enumInstance: Enum) { }
+export class EnumHoverProvider extends Singleton implements vscode.HoverProvider {
 
-    provideHover(document: vscode.TextDocument, position: vscode.Position) {
+    private context!: vscode.ExtensionContext;
+
+    private enumInstance: Enum = Enum.getInstance();
+
+    public init(context: vscode.ExtensionContext) {
+        this.context = context;
+
+        this.registerProvider();
+    } 
+
+    public provideHover(document: vscode.TextDocument, position: vscode.Position) {
         const wordRange = document.getWordRangeAtPosition(position, /\b[\w\.]+\b/);
         if (!wordRange) {
             return;
@@ -19,7 +29,7 @@ export class EnumHoverProvider implements vscode.HoverProvider {
             return;
         }
 
-        const enumInfo = this.enumInstance.enums.get(enumName);
+        const enumInfo = this.enumInstance.getEnumElement(enumName);
         if (!enumInfo) {
             return;
         }
@@ -37,8 +47,8 @@ export class EnumHoverProvider implements vscode.HoverProvider {
         return new vscode.Hover(contents);
     }
 
-    registerProvider(context: vscode.ExtensionContext) {
-        context.subscriptions.push(
+    private registerProvider() {
+        this.context.subscriptions.push(
             vscode.languages.registerHoverProvider(
                 LANGUAGE_SELECTOR,
                 this

@@ -3,25 +3,34 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { EnumCompletionProvider } from 'providers/enum/completion/completion';
 import { EnumHoverProvider } from 'providers/enum/hover/hover';
-import { GtaVersion } from 'gta-version';
-
-export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
+import { GtaVersionManager } from 'managers/gta-version-manager';
+import { Singleton } from 'singleton';
+import { StorageDataManager, StorageKey } from 'managers/storage-data-manager';
 
 export type EnumInfo = {
     name: string;
     elements: { name: string; value: string | number }[];
 };
 
-export class Enum {
-    enums = new Map<string, EnumInfo>();
+export class Enum extends Singleton {
 
-    loadEnums(context: vscode.ExtensionContext) {
-        const sbFolderPath = context.globalState.get('selectedSB4FolderPath') as string;
-        if (!sbFolderPath) {
+    private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
+
+    private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
+
+    private enums = new Map<string, EnumInfo>();
+
+    public getEnumElement(enumElement: string) {
+        return this.enums.get(enumElement);
+    }
+
+    public loadEnums() {
+        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        if (!sb4FolderPath) {
             return;
         }
 
-        const enumsPath = path.join(sbFolderPath, 'data', GtaVersion.getIdentifier(context), 'enums.txt');
+        const enumsPath = path.join(sb4FolderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
         const content = fs.readFileSync(enumsPath, 'utf-8');
         this.parseEnums(content);
     }
@@ -48,6 +57,7 @@ export class Enum {
                 } else {
                     value = currentValue++;
                 }
+
                 elements.push({ name: namePart, value });
             }
 
@@ -58,11 +68,10 @@ export class Enum {
 
 export const RegisterEnumProviders = {
     register(context: vscode.ExtensionContext) {
-        const enumInstance = new Enum();
-        const enumCompletionProvider = new EnumCompletionProvider(enumInstance, context);
-        const enumHoverProvider = new EnumHoverProvider(enumInstance);
+        const enumCompletionProvider = EnumCompletionProvider.getInstance();
+        const enumHoverProvider = EnumHoverProvider.getInstance();;
 
-        enumCompletionProvider.registerProvider(context);
-        enumHoverProvider.registerProvider(context);
+        enumCompletionProvider.init(context);
+        enumHoverProvider.init(context);
     }
 };

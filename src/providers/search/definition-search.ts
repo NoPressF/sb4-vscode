@@ -1,11 +1,19 @@
 import * as vscode from 'vscode';
 import { Search } from './search';
+import { Singleton } from 'singleton';
+import { Config } from 'config';
 
-export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
+export class DefinitionSearch extends Singleton implements Search {
 
-export class DefinitionSearch implements Search {
-    registerProvider(context: vscode.ExtensionContext): void {
-        const provider = vscode.languages.registerDefinitionProvider(LANGUAGE_SELECTOR, {
+    private context!: vscode.ExtensionContext;
+
+    public init(context: vscode.ExtensionContext) {
+        this.context = context;
+        this.registerProvider();
+    }
+    
+    private registerProvider(): void {
+        const provider = vscode.languages.registerDefinitionProvider(Config.LANGUAGE_SELECTOR, {
             provideDefinition: (document, position) => {
                 const wordRange = document.getWordRangeAtPosition(position, /(@?\w+)/);
                 const symbol = document.getText(wordRange).replace('@', '');
@@ -14,10 +22,10 @@ export class DefinitionSearch implements Search {
             },
         });
 
-        context.subscriptions.push(provider);
+        this.context.subscriptions.push(provider);
     }
 
-    find(document: vscode.TextDocument, label: string): vscode.Position | undefined {
+    private find(document: vscode.TextDocument, label: string): vscode.Position | undefined {
         const regex = new RegExp(`^:${label}\\b`, 'gm');
         const text = document.getText();
 

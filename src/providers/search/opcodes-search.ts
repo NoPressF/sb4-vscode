@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { Folder } from 'folder';
-import { GtaVersion } from 'gta-version';
+import { FolderManager } from 'managers/folder-manager';
+import { GtaVersionManager } from 'managers/gta-version-manager';
+import { Singleton } from 'singleton';
+import { StorageDataManager, StorageKey } from 'managers/storage-data-manager';
 
 type CommandArgs = {
     name?: string;
@@ -39,62 +41,66 @@ const SEARCH_TYPE: Record<string, SearchType> = {
     'Classes & members': SearchType.CLASSES_AND_MEMBERS
 };
 
-export class OpcodesSearch {
+export class OpcodesSearch extends Singleton {
 
     private searchType: SearchType = SearchType.OPCODES;
+    private context!: vscode.ExtensionContext;
+    private folderManager: FolderManager = FolderManager.getInstance();
+    private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
+    private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
 
-    create(context: vscode.ExtensionContext) {
+    public init(context: vscode.ExtensionContext) {
+        this.context = context;
+        this.create();
+    }
+
+    private create() {
         const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', () => {
-            const sb4FolderPath = this.getSB4FolderPath(context);
-
-            if (!sb4FolderPath) {
-                Folder.showSB4FolderSelectionPrompt();
+            if (!this.storageDataManager.hasStorageDataEmpty(StorageKey.Sb4FolderPath)) {
+                this.folderManager.handleFolderSelection();
                 return;
             }
 
-            const panel = this.createWebviewPanel(context);
-            const htmlContent = this.getHTMLContent(panel, context);
+            const panel = this.createWebviewPanel();
+            const htmlContent = this.getHTMLContent(panel);
 
-            this.setupPanel(context, panel, htmlContent, sb4FolderPath);
+            this.setupPanel(panel, htmlContent);
         });
 
-        context.subscriptions.push(disposable);
+        this.context.subscriptions.push(disposable);
     }
 
-    private getSB4FolderPath(context: vscode.ExtensionContext): string | undefined {
-        return context.globalState.get('selectedSB4FolderPath') as string;
-    }
-
-    private getHTMLContent(panel: vscode.WebviewPanel, context: vscode.ExtensionContext): string {
-        const htmlPath = this.getWebviewPath(context, 'index.html');
+    private getHTMLContent(panel: vscode.WebviewPanel): string {
+        const htmlPath = this.getWebviewPath('index.html');
         const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-        const cssUri = this.getWebviewUri(panel, context, 'styles.css');
-        const jsUri = this.getWebviewUri(panel, context, 'script.js');
+        const cssUri = this.getWebviewUri(panel, 'styles.css');
+        const jsUri = this.getWebviewUri(panel, 'script.js');
 
         return htmlContent
             .replace(/{{cssUri}}/g, cssUri.toString())
             .replace(/{{jsUri}}/g, jsUri.toString());
     }
 
-    private getWebviewPath(context: vscode.ExtensionContext, fileName: string): string {
-        return path.join(context.extensionPath, 'src', 'views', fileName);
+    private getWebviewPath(fileName: string): string {
+        return path.join(this.context.extensionPath, 'src', 'views', fileName);
     }
 
-    private getWebviewUri(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, fileName: string): vscode.Uri {
-        return panel.webview.asWebviewUri(this.getFileUri(this.getWebviewPath(context, fileName)));
+    private getWebviewUri(panel: vscode.WebviewPanel, fileName: string): vscode.Uri {
+        return panel.webview.asWebviewUri(this.getFileUri(this.getWebviewPath(fileName)));
     }
 
     private getFileUri(path: string): vscode.Uri {
         return vscode.Uri.file(path);
     }
 
-    private getOpcodesContent(context: vscode.ExtensionContext, sb4FolderPath: string): string {
+    private getOpcodesContent(): string {
+        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
         const functionsFilePath = path.join(
             sb4FolderPath,
             'data',
-            GtaVersion.getIdentifier(context),
-            GtaVersion.getFunctionsFile(context)
+            this.gtaVersionManager.getIdentifier(),
+            this.gtaVersionManager.getFunctionsFile()
         );
 
         const functionsList = this.readJsonFile(functionsFilePath);
@@ -304,21 +310,21 @@ export class OpcodesSearch {
         return newLine;
     }
 
-    private createWebviewPanel(context: vscode.ExtensionContext): vscode.WebviewPanel {
+    private createWebviewPanel(): vscode.WebviewPanel {
         return vscode.window.createWebviewPanel(
             'Search Opcodes View',
             'Search Opcodes',
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
-                localResourceRoots: [this.getFileUri(path.join(context.extensionPath, 'src', 'views'))]
+                localResourceRoots: [this.getFileUri(path.join(this.context.extensionPath, 'src', 'views'))]
             }
         );
     }
 
-    private setupPanel(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, htmlContent: string, sb4FolderPath: string): void {
+    private setupPanel(panel: vscode.WebviewPanel, htmlContent: string): void {
 
-        const iconPath = this.getFileUri(context.asAbsolutePath('logo.jpg'));
+        const iconPath = this.getFileUri(this.context.asAbsolutePath('images/logo.jpg'));
 
         panel.webview.html = htmlContent;
 
@@ -328,7 +334,7 @@ export class OpcodesSearch {
         };
 
         const updateOpcodesToWebview = () => {
-            const content = this.getOpcodesContent(context, sb4FolderPath);
+            const content = this.getOpcodesContent();
             panel.webview.postMessage({ command: 'updateOpcodes', content });
         };
 

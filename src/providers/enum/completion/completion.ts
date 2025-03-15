@@ -1,14 +1,21 @@
 import * as vscode from 'vscode';
 import { Enum } from '../enum';
+import { Singleton } from 'singleton';
+import { Config } from 'config';
 
-export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
+export class EnumCompletionProvider extends Singleton implements vscode.CompletionItemProvider {
 
-export class EnumCompletionProvider implements vscode.CompletionItemProvider {
-    constructor(private enumInstance: Enum, context: vscode.ExtensionContext) {
-        this.enumInstance.loadEnums(context);
+    private context!: vscode.ExtensionContext;
+
+    private enumInstance: Enum = Enum.getInstance();
+
+    public init(context: vscode.ExtensionContext) {
+        this.context = context;
+
+        this.registerProvider();
     }
 
-    provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
+    public provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
         const linePrefix = document.getText(new vscode.Range(position.line, 0, position.line, position.character));
         const enumUsageMatch = linePrefix.match(/(\w+)\.$/i);
         if (!enumUsageMatch) {
@@ -20,7 +27,7 @@ export class EnumCompletionProvider implements vscode.CompletionItemProvider {
     }
 
     private getEnumValues(enumName: string): vscode.CompletionItem[] {
-        const enumInfo = this.enumInstance.enums.get(enumName);
+        const enumInfo = this.enumInstance.getEnumElement(enumName);
         if (!enumInfo) {
             return [];
         }
@@ -33,10 +40,10 @@ export class EnumCompletionProvider implements vscode.CompletionItemProvider {
         });
     }
 
-    registerProvider(context: vscode.ExtensionContext) {
-        context.subscriptions.push(
+    private registerProvider() {
+        this.context.subscriptions.push(
             vscode.languages.registerCompletionItemProvider(
-                LANGUAGE_SELECTOR,
+                Config.LANGUAGE_SELECTOR,
                 this,
                 '.'
             )

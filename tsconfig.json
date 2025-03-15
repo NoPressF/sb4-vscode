@@ -5,15 +5,16 @@
 	  "lib": ["ES2022"],
 	  "sourceMap": true,
 	  "rootDir": "src",
-	  "outDir": "out",
+	  "outDir": "dist",
 	  "strict": true,
 	  "baseUrl": ".",
 	  "paths": {
 		"*": ["src/*", "utils/*"]
 	  },
 	  "noImplicitReturns": true,
-	  "noFallthroughCasesInSwitch": true
+	  "noFallthroughCasesInSwitch": true,
+	  "noUnusedLocals": true
 	},
 	"include": ["src/**/*"],
-  	"exclude": ["node_modules", "out"]
+  	"exclude": ["node_modules", "dist"]
 }

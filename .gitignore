@@ -2,5 +2,5 @@ out
 dist
 node_modules
 *.vsix
-syntaxes/sb4.tm-language-functions.json
+syntax/sb4.tm-language-functions.json
 package-lock.json

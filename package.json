@@ -5,7 +5,7 @@
   "version": "0.5.0",
   "publisher": "EOS",
   "author": "EOS",
-  "icon": "logo.jpg",
+  "icon": "images/logo.jpg",
   "galleryBanner": {
     "color": "#100f11",
     "theme": "dark"
@@ -74,13 +74,13 @@
       {
         "language": "sb",
         "scopeName": "source.sb4.functions",
-        "path": "./syntaxes/sb4.tm-language-functions.json",
+        "path": "./syntax/sb4.tm-language-functions.json",
         "extensions": []
       },
       {
         "language": "sb",
         "scopeName": "source.sb4",
-        "path": "./syntaxes/sb4.tm-language.json",
+        "path": "./syntax/sb4.tm-language.json",
         "extensions": []
       }
     ],
@@ -105,12 +105,8 @@
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
     "package": "npm run check-types && npm run lint && node esbuild.js --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
-    "lint": "eslint src",
-    "test": "vscode-test"
+    "lint": "eslint src"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -122,6 +118,7 @@
     "@vscode/test-electron": "^2.4.1",
     "esbuild": "^0.25.1",
     "eslint": "^9.22.0",
-    "typescript": "^5.7.3"
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.2"
   }
 }

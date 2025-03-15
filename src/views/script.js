@@ -5,6 +5,8 @@ const opcodeMatches = document.querySelector('.opcode-matches');
 const searchDisplayType = document.getElementById('search-display-type');
 const vscode = acquireVsCodeApi();
 
+let lastSearchText = '';
+
 function filterOpcodes(searchText) {
     const items = opcodeList.querySelectorAll('.opcode-item');
     let visibleItemsCount = 0;
@@ -38,7 +40,7 @@ function filterOpcodes(searchText) {
 
 function updateOpcodes(opcodes) {
     opcodeList.innerHTML = opcodes;
-    filterOpcodes('');
+    filterOpcodes(lastSearchText);
 }
 
 function focusOnInputField() {
@@ -49,7 +51,8 @@ function focusOnInputField() {
 }
 
 filterInput.addEventListener('input', (event) => {
-    filterOpcodes(event.target.value.toLowerCase());
+    lastSearchText = event.target.value.toLowerCase();
+    filterOpcodes(lastSearchText);
 });
 
 searchDisplayType.addEventListener('change', function () {

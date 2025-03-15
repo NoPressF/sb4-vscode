@@ -1,11 +1,18 @@
 import * as vscode from 'vscode';
 import { Search } from './search';
+import { Singleton } from 'singleton';
+import { Config } from 'config';
 
-export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
+export class ReferenceSearch extends Singleton implements Search {
+    private context!: vscode.ExtensionContext;
+    
+    public init(context: vscode.ExtensionContext) {
+        this.context = context;
+        this.registerProvider();
+    }
 
-export class ReferenceSearch implements Search {
-    registerProvider(context: vscode.ExtensionContext) {
-        const provider = vscode.languages.registerReferenceProvider(LANGUAGE_SELECTOR, {
+    private registerProvider() {
+        const provider = vscode.languages.registerReferenceProvider(Config.LANGUAGE_SELECTOR, {
             provideReferences: (document, position) => {
                 const wordRange = document.getWordRangeAtPosition(position);
                 const word = document.getText(wordRange);
@@ -14,10 +21,10 @@ export class ReferenceSearch implements Search {
             }
         });
 
-        context.subscriptions.push(provider);
+        this.context.subscriptions.push(provider);
     }
 
-    find(document: vscode.TextDocument, label: string): vscode.Location[] {
+    private find(document: vscode.TextDocument, label: string): vscode.Location[] {
         const regex = new RegExp(label, 'gm');
         const text = document.getText();
         const locations = [];

@@ -1,26 +1,20 @@
 import * as vscode from 'vscode';
+import { Singleton } from 'singleton';
 
-export const CompilerTools = {
-    createFileLevelDiagnostics(errorMessage: string): vscode.Diagnostic[] {
+export class CompilerTools extends Singleton {
+    public createFileLevelDiagnostics(errorMessage: string): vscode.Diagnostic[] {
         const diagnostics: vscode.Diagnostic[] = [];
-
         const regex = /error:\s(.+):(\d+)\s(.*)/g;
         const matches = [...errorMessage.matchAll(regex)];
 
         if (matches.length > 0) {
             const [, _, lineStr, message] = matches[0];
-            const lineNumber = parseInt(lineStr, 10);
-
-            const range = new vscode.Range(lineNumber, 0, lineNumber, Number.MAX_SAFE_INTEGER);
-
-            const diagnostic = new vscode.Diagnostic(range, message, vscode.DiagnosticSeverity.Error);
-            diagnostics.push(diagnostic);
+            const range = new vscode.Range(parseInt(lineStr, 10), 0, parseInt(lineStr, 10), Number.MAX_SAFE_INTEGER);
+            diagnostics.push(new vscode.Diagnostic(range, message, vscode.DiagnosticSeverity.Error));
         } else {
-            const range = new vscode.Range(0, 0, 0, 0);
-            const diagnostic = new vscode.Diagnostic(range, errorMessage, vscode.DiagnosticSeverity.Error);
-            diagnostics.push(diagnostic);
+            diagnostics.push(new vscode.Diagnostic(new vscode.Range(0, 0, 0, 0), errorMessage, vscode.DiagnosticSeverity.Error));
         }
 
         return diagnostics;
     }
-};
+}
