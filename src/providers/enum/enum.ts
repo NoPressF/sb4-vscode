@@ -20,6 +20,10 @@ export class Enum extends Singleton {
 
     private enums = new Map<string, EnumInfo>();
 
+    public init() {
+        this.loadEnums();
+    }
+
     public getEnumElement(enumElement: string) {
         return this.enums.get(enumElement);
     }
@@ -68,9 +72,11 @@ export class Enum extends Singleton {
 
 export const RegisterEnumProviders = {
     register(context: vscode.ExtensionContext) {
+        const enumInstance = Enum.getInstance();
         const enumCompletionProvider = EnumCompletionProvider.getInstance();
         const enumHoverProvider = EnumHoverProvider.getInstance();;
 
+        enumInstance.init();
         enumCompletionProvider.init(context);
         enumHoverProvider.init(context);
     }

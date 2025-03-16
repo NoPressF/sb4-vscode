@@ -103,8 +103,8 @@ export class LanguageManager extends Singleton {
 
     private async parseGameData(versionData: GtaVersion): Promise<{ functions: string[]; classes: string[]; methods: string[]; enums: string[]; }> {
         const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        const functionsData = await this.loadFunctionNames(sb4FolderPath, versionData);
-        const enumsData = await this.loadEnums(sb4FolderPath, versionData);
+        const functionsData = this.loadFunctionNames(sb4FolderPath, versionData);
+        const enumsData = this.loadEnums(sb4FolderPath, versionData);
 
         return {
             functions: this.extractFunctions(functionsData),
