@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export interface WebviewHandler {
+export interface WebViewHandler {
     command: string;
     data: any;
 };
@@ -63,11 +63,11 @@ export class WebViewManager {
     //     this.panel?.onDidChangeViewState(handler);
     // }
 
-    public sendMessage(message: WebviewHandler): void {
+    public sendMessage(message: WebViewHandler): void {
         this.panel?.webview.postMessage(message);
     }
 
-    public readJsonFile(filePath: string): any {
+    public static readJsonFile(filePath: string): any {
         const fileContent = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(fileContent);
     };

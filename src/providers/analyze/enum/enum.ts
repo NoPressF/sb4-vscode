@@ -70,14 +70,12 @@ export class Enum extends Singleton {
     }
 }
 
-export const RegisterEnumProviders = {
-    register(context: vscode.ExtensionContext) {
-        const enumInstance = Enum.getInstance();
-        const enumCompletionProvider = EnumCompletionProvider.getInstance();
-        const enumHoverProvider = EnumHoverProvider.getInstance();;
+export const registerEnumProviders = (context: vscode.ExtensionContext) => {
+    const enumInstance = Enum.getInstance();
+    const enumCompletionProvider = EnumCompletionProvider.getInstance();
+    const enumHoverProvider = EnumHoverProvider.getInstance();
 
-        enumInstance.init();
-        enumCompletionProvider.init(context);
-        enumHoverProvider.init(context);
-    }
+    enumInstance.init();
+    enumCompletionProvider.init(context);
+    enumHoverProvider.init(context);
 };

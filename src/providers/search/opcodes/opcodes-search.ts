@@ -4,13 +4,13 @@ import { FolderManager } from 'managers/folder-manager';
 import { GtaVersionManager } from 'managers/gta-version-manager';
 import { Singleton } from 'singleton';
 import { StorageDataManager, StorageKey } from 'managers/storage-data-manager';
-import { WebviewHandler, WebViewManager } from 'managers/webview-manager';
+import { WebViewHandler, WebViewManager } from 'managers/webview-manager';
 import { CommandProcessor } from './command-processor';
 import { MessageCommand } from './types';
 
 export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
-    private webviewManager!: WebViewManager;
+    private webViewManager!: WebViewManager;
     private folderManager: FolderManager = FolderManager.getInstance();
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
@@ -28,20 +28,20 @@ export class OpcodesSearch extends Singleton {
                 return;
             }
 
-            this.webviewManager = new WebViewManager(context, 'src/views/opcodes');
+            this.webViewManager = new WebViewManager(context, 'src/views/opcodes');
 
-            const iconPath = this.webviewManager.getFileUri(this.context.asAbsolutePath('images/logo.jpg'));
+            const iconPath = this.webViewManager.getFileUri(this.context.asAbsolutePath('images/logo.jpg'));
 
-            this.webviewManager.createPanel('opcodes-view', 'Search Opcodes', iconPath);
-            this.setupWebviewHandlers();
+            this.webViewManager.createPanel('opcodes-view', 'Search Opcodes', iconPath);
+            this.setupWebViewHandlers();
             this.updateWebviewContent();
         });
 
         this.context.subscriptions.push(disposable);
     }
 
-    private setupWebviewHandlers(): void {
-        this.webviewManager.registerMessageHandler(message => {
+    private setupWebViewHandlers(): void {
+        this.webViewManager.registerMessageHandler(message => {
             switch (message.command) {
                 case MessageCommand.UPDATE_SEARCH_TYPE:
                     this.commandProcessor.setSearchType(message.type);
@@ -50,7 +50,7 @@ export class OpcodesSearch extends Singleton {
             }
         });
 
-        // this.webviewManager.registerChangeViewStateHandler(event => {
+        // this.webViewManager.registerChangeViewStateHandler(event => {
         //     if (event.webviewPanel.visible) {
         //         this.updateWebviewContent();
         //     }
@@ -60,25 +60,16 @@ export class OpcodesSearch extends Singleton {
     private updateWebviewContent() {
         const content = this.getOpcodesContent();
 
-        const message: WebviewHandler = {
+        const message: WebViewHandler = {
             command: 'updateOpcodes',
             data: content
         };
 
-        this.webviewManager.sendMessage(message);
+        this.webViewManager.sendMessage(message);
     }
 
     private getOpcodesContent(): string {
-        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        const functionsFilePath = path.join(
-            sb4FolderPath,
-            'data',
-            this.gtaVersionManager.getIdentifier(),
-            this.gtaVersionManager.getFunctionsFile()
-        );
-
-        const functionsList = this.webviewManager.readJsonFile(functionsFilePath);
-        const functionsContent = this.commandProcessor.processCommands(functionsList);
+        const functionsContent = this.commandProcessor.processCommands();
 
         return functionsContent
             .map(({ commandInfo, commandString }) => {
