@@ -42,7 +42,7 @@ After installing the extension, you need to specify the path to the Sanny Builde
 This extension is distributed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ## Tasks
-- [ ] Completion and Hightlight to the Classes and Methods
+- [X] Completion and Highlight to the Classes and Methods
 - [ ] Decompile script
 - [X] Improve opcodes search
 - [ ] Highlight gxt strings
