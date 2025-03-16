@@ -46,7 +46,7 @@ This extension is distributed under the MIT License. For more details, see the [
 - [ ] Decompile script
 - [X] Improve opcodes search
 - [ ] Highlight gxt strings
-- [ ] Refactor code
+- [X] Refactor code
 - [ ] Call an error when string longer than 7 characters in the single quotes
 ---
 
