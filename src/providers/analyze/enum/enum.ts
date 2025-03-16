@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { EnumCompletionProvider } from 'providers/enum/completion/completion';
-import { EnumHoverProvider } from 'providers/enum/hover/hover';
+import { EnumCompletionProvider } from 'providers/analyze/enum/completion';
+import { EnumHoverProvider } from 'providers/analyze/enum/hover';
 import { GtaVersionManager } from 'managers/gta-version-manager';
 import { Singleton } from 'singleton';
 import { StorageDataManager, StorageKey } from 'managers/storage-data-manager';

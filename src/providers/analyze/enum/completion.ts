@@ -1,12 +1,10 @@
 import * as vscode from 'vscode';
-import { Enum } from '../enum';
+import { Enum } from './enum';
 import { Singleton } from 'singleton';
 import { Config } from 'config';
 
 export class EnumCompletionProvider extends Singleton implements vscode.CompletionItemProvider {
-
     private context!: vscode.ExtensionContext;
-
     private enumInstance: Enum = Enum.getInstance();
 
     public init(context: vscode.ExtensionContext) {

@@ -5,7 +5,7 @@ import { LanguageManager } from 'managers/language-manager';
 import { CompileCommand } from 'compiler-tools/compile-command';
 import { DecompileCommand } from 'compiler-tools/decompile-command';
 import { registerSearchProviders } from 'providers/search/search';
-import { RegisterEnumProviders } from 'providers/enum/enum';
+import { RegisterEnumProviders } from 'providers/analyze/enum/enum';
 import { GtaVersionButton } from 'components/gta-version-button.component';
 
 export function activate(context: vscode.ExtensionContext) {

@@ -1,13 +1,11 @@
 import * as vscode from 'vscode';
-import { Enum } from '../enum';
+import { Enum } from './enum';
 import { Singleton } from 'singleton';
 
 export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
 
 export class EnumHoverProvider extends Singleton implements vscode.HoverProvider {
-
     private context!: vscode.ExtensionContext;
-
     private enumInstance: Enum = Enum.getInstance();
 
     public init(context: vscode.ExtensionContext) {
