@@ -53,7 +53,7 @@ export abstract class BaseCommand extends Singleton implements vscode.Disposable
     }
 
     private async getTargetFilePath(): Promise<string | undefined> {
-        if (this.executeType == ExecuteType.COMPILE) {
+        if (this.executeType === ExecuteType.COMPILE) {
             const editor = vscode.window.activeTextEditor;
             return editor?.document.uri.fsPath;
         }

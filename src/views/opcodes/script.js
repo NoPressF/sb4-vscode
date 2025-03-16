@@ -5,7 +5,12 @@ const opcodeMatches = document.querySelector('.opcode-matches');
 const searchDisplayType = document.getElementById('search-display-type');
 const vscode = acquireVsCodeApi();
 
+const MessageCommand = Object.freeze({
+    UPDATE_SEARCH_TYPE: 0
+});
+
 let lastSearchText = '';
+let shouldScrollToTop = true;
 
 function filterOpcodes(searchText) {
     const items = opcodeList.querySelectorAll('.opcode-item');
@@ -57,8 +62,9 @@ filterInput.addEventListener('input', (event) => {
 
 searchDisplayType.addEventListener('change', function () {
     const type = this.value;
+    shouldScrollToTop = true;
     vscode.postMessage({
-        command: 'updateSearchType',
+        command: MessageCommand.UPDATE_SEARCH_TYPE,
         type: type
     });
 });
@@ -70,6 +76,11 @@ window.addEventListener('load', () => {
 window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.command === 'updateOpcodes') {
-        updateOpcodes(message.content);
+        updateOpcodes(message.data);
+
+        if (shouldScrollToTop) {
+            opcodeList.scrollTop = 0;
+            shouldScrollToTop = false;
+        }
     }
 });

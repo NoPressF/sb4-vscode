@@ -4,9 +4,9 @@ import * as path from 'path';
 import { Singleton } from 'singleton';
 import { LanguageManager } from './language-manager';
 import { StorageDataManager, StorageKey } from './storage-data-manager';
+import { Config } from 'config';
 
 export class FolderManager extends Singleton {
-    private static readonly SB_EXE = 'sanny.exe';
     private context!: vscode.ExtensionContext;
     private languageManager: LanguageManager = LanguageManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
@@ -59,9 +59,9 @@ export class FolderManager extends Singleton {
     }
 
     private validateSbFolder(folderPath: string): boolean {
-        const exePath = path.join(folderPath, FolderManager.SB_EXE);
+        const exePath = path.join(folderPath, Config.SANNY_EXE);
         if (!fs.existsSync(exePath)) {
-            vscode.window.showErrorMessage(`${FolderManager.SB_EXE} was not found in this folder.`);
+            vscode.window.showErrorMessage(`${Config.SANNY_EXE} was not found in this folder.`);
             return false;
         }
         return true;
