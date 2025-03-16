@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { FolderManager } from 'managers/folder-manager';
-import { GtaVersionManager } from 'managers/gta-version-manager';
 import { Singleton } from 'singleton';
 import { StorageDataManager, StorageKey } from 'managers/storage-data-manager';
 import { WebViewHandler, WebViewManager } from 'managers/webview-manager';
@@ -12,7 +10,6 @@ export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
     private webViewManager!: WebViewManager;
     private folderManager: FolderManager = FolderManager.getInstance();
-    private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
     private commandProcessor: CommandProcessor = CommandProcessor.getInstance();
 

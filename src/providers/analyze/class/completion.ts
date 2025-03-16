@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { Class } from './class';
 import { Singleton } from 'singleton';
 import { Config } from 'config';
-import { sign } from 'crypto';
 
 export class ClassCompletionProvider extends Singleton implements vscode.CompletionItemProvider {
     private context!: vscode.ExtensionContext;
