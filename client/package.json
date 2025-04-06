@@ -1,0 +1,22 @@
+{
+	"name": "sanny-builder-4-client",
+	"description": "Sanny builder 4 Client",
+	"publisher": "EOS",
+  	"author": "EOS",
+	"license": "MIT",
+	"version": "0.5.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NoPressF/sb4-vscode"
+	},
+	"engines": {
+		"vscode": "^1.98.0"
+	},
+	"dependencies": {
+		"glob": "^11.0.1",
+		"vscode-languageclient": "^9.0.1"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.98.0"
+	}
+}

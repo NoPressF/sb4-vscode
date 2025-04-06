@@ -43,11 +43,11 @@ This extension is distributed under the MIT License. For more details, see the [
 
 ## Tasks
 - [X] Completion and Highlight to the Classes and Methods
-- [ ] Decompile script
+- [X] Decompile script
 - [X] Improve opcodes search
 - [ ] Highlight gxt strings
 - [X] Refactor code
-- [ ] Call an error when string longer than 7 characters in the single quotes
+- [X] Call an error when string longer than 7 characters in the single quotes
 ---
 
 **Note**: This extension is unofficial and is not affiliated with the developers of Sanny Builder 4.
