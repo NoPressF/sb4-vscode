@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { StorageDataManager } from './managers/storage-data-manager';
+import { StorageDataManager } from '@shared';
 import { FolderManager } from './managers/folder-manager';
 import { LanguageManager } from './managers/language-manager';
 import { CompileCommand } from './compiler-tools/compile-command';
@@ -16,20 +16,20 @@ export function activate(context: vscode.ExtensionContext) {
     const gtaVersionButton = GtaVersionButton.getInstance();
     const compileCommand = CompileCommand.getInstance();
     const decompileCommand = DecompileCommand.getInstance();
-    
+
     storageDataManager.init(context);
     folderManager.init(context);
     gtaVersionButton.init(context);
     languageManager.init(context);
     compileCommand.init(context);
     decompileCommand.init(context);
-    
+
     registerSearchProviders(context);
     registerClassProviders(context);
 
     clientInit(context);
 }
 
-export function deactivate() { 
+export function deactivate() {
     clientDeactivate();
 }

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { GtaVersionManager } from '../managers/gta-version-manager';
-import { StorageDataManager, StorageKey } from '../managers/storage-data-manager';
-import { Singleton } from '../../../src/singleton';
+import { GtaVersionManager } from '@shared';
+import { StorageDataManager, StorageKey } from '@shared';
+import { Singleton } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
 import { Config } from '../config';
 
@@ -48,7 +48,7 @@ export class GtaVersionButton extends Singleton {
             GtaVersionButton.BUTTON_ID,
             async () => this.handleVersionSelection()
         );
-        
+
         this.context.subscriptions.push(disposable);
     }
 

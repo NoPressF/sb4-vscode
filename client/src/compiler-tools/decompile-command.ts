@@ -1,5 +1,5 @@
-import { BaseCommand, ExecuteType } from './base-command';
+import { CommandBase, ExecuteType } from './command-base';
 
-export class DecompileCommand extends BaseCommand {
+export class DecompileCommand extends CommandBase {
     protected executeType: ExecuteType = ExecuteType.DECOMPILE;
 }

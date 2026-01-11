@@ -4,9 +4,9 @@ import * as fs from 'fs';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
 import { CompilerTools } from './compiler-tools';
-import { Singleton } from '../../../src/singleton';
-import { StorageDataManager, StorageKey } from '../managers/storage-data-manager';
-import { GtaVersionManager } from '../managers/gta-version-manager';
+import { Singleton } from '@shared';
+import { StorageDataManager, StorageKey } from '@shared';
+import { GtaVersionManager } from '@shared';
 
 export enum ExecuteType {
     COMPILE,
@@ -22,7 +22,7 @@ interface ExecuteInfo {
     errorMessagePrefix: string;
 }
 
-export abstract class BaseCommand extends Singleton implements vscode.Disposable {
+export abstract class CommandBase extends Singleton implements vscode.Disposable {
 
     protected abstract executeType: ExecuteType;
     private diagnosticCollection?: vscode.DiagnosticCollection;
@@ -32,8 +32,21 @@ export abstract class BaseCommand extends Singleton implements vscode.Disposable
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
 
     private readonly executeOptions: Record<ExecuteType, ExecuteInfo> = {
-        [ExecuteType.COMPILE]: { commandName: 'compileScript', flag: 'compile', logFileName: 'compile.log', operationTitle: 'Compiling', successMessage: 'Compiling succeeded', errorMessagePrefix: 'Compiling failed' },
-        [ExecuteType.DECOMPILE]: { commandName: 'decompileScript', flag: 'decompile', operationTitle: 'Decompiling', successMessage: 'Decompile succeeded', errorMessagePrefix: 'Decompile failed' },
+        [ExecuteType.COMPILE]: {
+            commandName: 'compileScript',
+            flag: 'compile',
+            logFileName: 'compile.log',
+            operationTitle: 'Compiling',
+            successMessage: 'Compiling succeeded',
+            errorMessagePrefix: 'Compiling failed'
+        },
+        [ExecuteType.DECOMPILE]: {
+            commandName: 'decompileScript',
+            flag: 'decompile',
+            operationTitle: 'Decompiling',
+            successMessage: 'Decompile succeeded',
+            errorMessagePrefix: 'Decompile failed'
+        },
     };
 
     public init(context: vscode.ExtensionContext) {
@@ -105,7 +118,7 @@ export abstract class BaseCommand extends Singleton implements vscode.Disposable
         }, async () => this.runCompilerProcess(logPath, filePath, sb4FolderPath, args));
     }
 
-    private async runCompilerProcess(logPath: string, filePath: string, sb4FolderPath: string, args: string[]): Promise<void> {
+    private async runCompilerProcess(logPath: string | null, filePath: string, sb4FolderPath: string, args: string[]): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             const child = spawn(path.join(sb4FolderPath, 'sanny.exe'), args);
 
@@ -114,15 +127,15 @@ export abstract class BaseCommand extends Singleton implements vscode.Disposable
         });
     }
 
-    private async handleProcessClose(logPath: string, filePath: string, resolve: () => void, reject: (reason?: any) => void) {
+    private async handleProcessClose(logPath: string | null, filePath: string, resolve: () => void, reject: (reason?: any) => void) {
         try {
             if (logPath !== null) {
                 await fs.promises.access(logPath);
+
+                const content = await this.readLogFile(logPath);
+                this.handleLogContent(content, filePath, resolve);
             }
 
-            const content = await this.readLogFile(logPath);
-            this.handleLogContent(content, filePath, resolve);
-            
         } catch (error) {
             this.handleError(error as any, reject);
         }
@@ -134,10 +147,6 @@ export abstract class BaseCommand extends Singleton implements vscode.Disposable
     }
 
     private async readLogFile(logPath: string): Promise<string> {
-        if (logPath === null) {
-            return null;
-        }
-
         const buffer = await fs.promises.readFile(logPath);
         return iconv.decode(buffer, 'win1251');
     }

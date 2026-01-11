@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Singleton } from '../../../src/singleton';
+import { Singleton } from '@shared';
 import { LanguageManager } from './language-manager';
-import { StorageDataManager, StorageKey } from './storage-data-manager';
+import { StorageDataManager, StorageKey } from '@shared';
 import { Config } from '../config';
 
 export class FolderManager extends Singleton {
@@ -18,7 +18,7 @@ export class FolderManager extends Singleton {
 
     async handleFolderSelection() {
         const action = await vscode.window.showErrorMessage(
-            'Please select the SB4 folder first.', 
+            'Please select the SB4 folder first.',
             'Select SB4 Folder'
         );
 
@@ -29,7 +29,7 @@ export class FolderManager extends Singleton {
 
     private registerFolderCommand(): void {
         const disposable = vscode.commands.registerCommand(
-            'sb4.selectFolder', 
+            'sb4.selectFolder',
             async () => this.selectFolderHandler()
         );
 

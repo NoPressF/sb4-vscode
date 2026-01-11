@@ -1,20 +1,22 @@
 {
 	"compilerOptions": {
-	  "module": "CommonJS",
-	  "target": "ES2022",
-	  "lib": ["ES2022"],
-	  "sourceMap": true,
-	  "rootDir": "src",
-	  "outDir": "out",
-	  "noImplicitReturns": true,
-	  "noFallthroughCasesInSwitch": true
+		"target": "ES2020",
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"strict": true,
+		"baseUrl": ".",
+		"outDir": "dist",
+		"paths": {
+			"@shared": [
+				"shared/src/index.ts"
+			]
+		},
+		"esModuleInterop": true,
+		"skipLibCheck": true
 	},
-	"include": ["src"],
-	"exclude": [
-		"node_modules"
-	],
-	"references": [
-		{ "path": "./client" },
-		{ "path": "./server" }
+	"include": [
+		"client",
+		"server",
+		"shared"
 	]
 }

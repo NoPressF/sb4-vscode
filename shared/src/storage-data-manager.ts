@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Singleton } from '../singleton';
+import { Singleton } from './singleton';
 
 export enum StorageKey {
     GtaVersion = 'gtaVersion',

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { FolderManager } from '../../../managers/folder-manager';
-import { Singleton } from '../../../../../src/singleton';
-import { StorageDataManager, StorageKey } from '../../../managers/storage-data-manager';
+import { Singleton } from '@shared';
+import { StorageDataManager, StorageKey } from '@shared';
 import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
 import { CommandProcessor } from './command-processor';
 import { MessageCommand } from './types';

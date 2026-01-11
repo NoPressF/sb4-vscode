@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { FolderManager } from './folder-manager';
-//import { type GtaVersion } from '../../src/';
-import { GtaVersionManager } from '../../../src/gta-version-manager';
-import { Singleton } from '../../../src/singleton';
-import { StorageDataManager, StorageKey } from './storage-data-manager';
+import { type GtaVersion, GtaVersionManager } from '@shared';
+import { Singleton } from '@shared';
+import { StorageDataManager, StorageKey } from '@shared';
 
 interface GrammarPattern {
     match: string;

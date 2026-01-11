@@ -1,4 +1,4 @@
-import { Singleton } from '../singleton';
+import { Singleton } from './singleton';
 import { StorageDataManager, StorageKey } from './storage-data-manager';
 
 export interface GtaVersion {

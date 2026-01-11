@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Class } from './class';
-import { Singleton } from '../../../../../src/singleton';
+import { Singleton } from '@shared';
 
 export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
 
@@ -12,7 +12,7 @@ export class ClassHoverProvider extends Singleton implements vscode.HoverProvide
         this.context = context;
 
         this.registerProvider();
-    } 
+    }
 
     public provideHover(document: vscode.TextDocument, position: vscode.Position) {
         const wordRange = document.getWordRangeAtPosition(position, /\b[\w\.]+\b/);

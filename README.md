@@ -42,12 +42,7 @@ After installing the extension, you need to specify the path to the Sanny Builde
 This extension is distributed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ## Tasks
-- [X] Completion and Highlight to the Classes and Methods
-- [X] Decompile script
-- [X] Improve opcodes search
 - [ ] Highlight gxt strings
-- [X] Refactor code
-- [X] Call an error when string longer than 7 characters in the single quotes
 ---
 
 **Note**: This extension is unofficial and is not affiliated with the developers of Sanny Builder 4.

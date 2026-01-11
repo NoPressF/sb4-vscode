@@ -18,7 +18,8 @@ import {
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
-//import { initEnum } from './providers/analyze/enum/enum';
+
+import { initEnum } from './providers/analyze/enum/enum';
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -28,7 +29,6 @@ let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
 
 connection.onInitialize((params: InitializeParams) => {
-	console.log("init");
 	const capabilities = params.capabilities;
 
 	hasConfigurationCapability = !!(
@@ -69,7 +69,7 @@ connection.onInitialized(() => {
 		connection.workspace.onDidChangeWorkspaceFolders(_event => { });
 	}
 
-	//initEnum();
+	initEnum();
 });
 
 connection.onDidChangeConfiguration(_ => {

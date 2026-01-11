@@ -1,9 +1,9 @@
 import * as path from 'path';
-import { Singleton } from '../../../../../src/singleton';
+import { Singleton } from '@shared';
 import { CommandArgs, CommandInfo, CommandIO, SearchType } from './types';
 import { SEARCH_TYPE, VAR_NOTATIONS } from '../../../config';
-import { StorageDataManager, StorageKey } from '../../../managers/storage-data-manager';
-import { GtaVersionManager } from '../../../managers/gta-version-manager';
+import { StorageDataManager, StorageKey } from '@shared';
+import { GtaVersionManager } from '@shared';
 import { WebViewManager } from '../../../managers/webview-manager';
 
 
@@ -75,96 +75,96 @@ export class CommandProcessor extends Singleton {
             ? this.formatOpcodeCommandString(commandInfo, commandIO)
             : this.formatClassCommandString(commandInfo, commandIO);
     }
-    
+
     private formatOpcodeCommandString(commandInfo: CommandInfo, commandIO: CommandIO): string {
         let commandString = `${commandInfo.id}: `;
         commandString += commandIO.output || '';
         commandString += commandInfo.name ?? '';
         commandString += ' ';
         commandString += commandIO.input ? `${commandIO.input}` : '';
-    
+
         return commandString;
     }
-    
+
     public formatClassCommandString(commandInfo: CommandInfo, commandIO: CommandIO): string {
         let commandString = commandIO.output || '';
         commandString += `${commandInfo.class}.${commandInfo.member}`;
         commandString += commandIO.input ? `${commandIO.input}` : '';
-    
+
         return commandString;
     }
-    
+
     private processCommandArgs(input?: CommandArgs[], output?: CommandArgs[]): CommandIO {
         return this.searchType === SearchType.OPCODES
             ? this.processOpcodeCommandArgs(input, output)
             : this.processClassCommandArgs(input, output);
     }
-    
+
     private processOpcodeCommandArgs(input?: CommandArgs[], output?: CommandArgs[]): CommandIO {
         return {
             input: this.formatOpcodeInputArgs(input),
             output: this.formatOpcodeOutputArgs(output)
         };
     }
-    
+
     public processClassCommandArgs(input?: CommandArgs[], output?: CommandArgs[]): CommandIO {
         return {
             input: this.formatClassInputArgs(input),
             output: this.formatClassOutputArgs(output)
         };
     }
-    
+
     private formatOpcodeInputArgs(input?: CommandArgs[]): string {
         if (!input) {
             return '';
         }
-    
+
         return input.map(arg => this.formatOpcodeInputArg(arg)).join(' ');
     }
-    
+
     private formatClassInputArgs(input?: CommandArgs[]): string {
         if (!input) {
             return '()';
         }
-    
+
         const formatted = input.map(arg => this.formatClassInputArg(arg)).join(', ');
         return `(${formatted})`;
     }
-    
+
     private formatOpcodeInputArg(args: CommandArgs): string {
         const { name, type, source } = args;
         const formattedName = name ? `{${name}}` : '';
         const formattedType = type ? `[${type}]` : '';
         return [formattedName, formattedType, source].filter(Boolean).join(' ');
     }
-    
+
     private formatClassInputArg(args: CommandArgs): string {
         return args.name || '';
     }
-    
+
     private formatOpcodeOutputArgs(output?: CommandArgs[]): string {
         if (!output) {
             return '';
         }
-    
+
         return output.map(arg => this.formatOpcodeOutputArg(arg)).join(', ') + ' = ' || '';
     }
-    
+
     private formatClassOutputArgs(output?: CommandArgs[]): string {
         if (!output) {
             return '';
         }
-    
+
         return output.map(arg => this.formatClassOutputArg(arg)).join(', ') + ' = ' || '';
     }
-    
+
     private formatOpcodeOutputArg(args: CommandArgs): string {
         const { name = '', type = '', source = '' } = args;
         const normalizedSource = `${this.getNormalizedVar(source)} `;
         const formattedName = name.trim() ? `${name}: ` : '';
         return `[${normalizedSource}${formattedName}${type}]`;
     }
-    
+
     private formatClassOutputArg(args: CommandArgs): string {
         const { name, type } = args;
         return [name, type ? `[${type}]` : ''].filter(Boolean).join(' ');

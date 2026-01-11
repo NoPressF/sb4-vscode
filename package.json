@@ -28,7 +28,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./client/out/extension.js",
+  "main": "./dist/client/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -116,20 +116,27 @@
     "cleo"
   ],
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -b",
-    "watch": "tsc -b -w",
-    "lint": "eslint",
-    "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+    "compile:client": "webpack --config webpack.config.js --mode production",
+    "compile:server": "tsc -p tsconfig.json",
+    "build": "npm run compile:client && npm run compile:server",
+    "watch:client": "webpack --watch --config webpack.config.js --mode development",
+    "watch:server": "tsc -w -p tsconfig.json"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "@types/vscode": "^1.98.0",
-    "@typescript-eslint/eslint-plugin": "^8.25.0",
-    "@typescript-eslint/parser": "^8.25.0",
-    "eslint": "^9.22.0",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.8.2"
+    "@types/node": "^20.19.28",
+    "@types/vscode": "^1.108.1",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "eslint": "^9.39.2",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.7.2",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.11",
+    "vscode-languageclient": "^9.0.1"
   }
 }

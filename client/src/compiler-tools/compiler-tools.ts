@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Singleton } from '../../../src/singleton';
+import { Singleton } from '@shared';
 
 export class CompilerTools extends Singleton {
     public createFileLevelDiagnostics(errorMessage: string): vscode.Diagnostic[] {

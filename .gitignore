@@ -3,4 +3,5 @@ node_modules
 *.vsix
 syntax/sb4.tm-language-functions.json
 package-lock.json
-tsconfig.tsbuildinfo
+*.tsbuildinfo
+dist

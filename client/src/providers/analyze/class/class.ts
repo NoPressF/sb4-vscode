@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { StorageDataManager, StorageKey } from '../../../managers/storage-data-manager';
-import { Singleton } from '../../../../../src/singleton';
+import { StorageDataManager, StorageKey } from '@shared';
+import { Singleton } from '@shared';
 import { ClassCompletionProvider } from './completion';
 import { ClassHoverProvider } from './hover';
-import { CommandProcessor } from '../../../providers/search/opcodes/command-processor';
-import { CommandInfo } from '../../../providers/search/opcodes/types';
+import { CommandProcessor } from '../../search/opcodes/command-processor';
+import { CommandInfo } from '../../search/opcodes/types';
 
 export type ClassInfo = {
     members: Map<string, string>
@@ -22,7 +22,7 @@ export class Class extends Singleton {
     public getClassInfo(className: string): ClassInfo | undefined {
         return this.classes.get(className);
     }
-    
+
     public getMemberSignature(className: string, member: string): string | undefined {
         const classInfo = this.classes.get(className);
         return classInfo?.members.get(member);
