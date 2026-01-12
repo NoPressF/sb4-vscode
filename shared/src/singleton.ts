@@ -1,11 +1,14 @@
 export abstract class Singleton {
-    private static instances: Map<string, Singleton> = new Map();
 
-    public static getInstance<T extends Singleton>(this: new () => T): T {
-        const className = this.name;
-        if (!Singleton.instances.has(className)) {
-            Singleton.instances.set(className, new this());
+    private static instances = new WeakMap<Function, any>();
+
+    public static getInstance<T>(this: new () => T): T {
+        let inst = Singleton.instances.get(this);
+        if (!inst) {
+            inst = new this();
+            Singleton.instances.set(this, inst);
         }
-        return Singleton.instances.get(className) as T;
+        return inst as T;
     }
+
 }

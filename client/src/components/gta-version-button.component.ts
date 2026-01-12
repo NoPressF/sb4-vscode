@@ -3,7 +3,7 @@ import { GtaVersionManager } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
 import { Singleton } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
-import { Config } from '../config';
+import { CONFIG } from '../config';
 
 export class GtaVersionButton extends Singleton {
     private static readonly BUTTON_ID = 'sb4.openSettings';
@@ -53,7 +53,7 @@ export class GtaVersionButton extends Singleton {
     }
 
     private async handleVersionSelection(): Promise<void> {
-        const selected = await vscode.window.showQuickPick(this.gtaVersionManager.getGtaVersion());
+        const selected = await vscode.window.showQuickPick(this.gtaVersionManager.getVersions());
         if (!selected) {
             return;
         }
@@ -71,7 +71,7 @@ export class GtaVersionButton extends Singleton {
 
     private setupEditorChangeHandler(): void {
         const updateVisibility = (editor: vscode.TextEditor | undefined) => {
-            const isSbFile = editor?.document && vscode.languages.match(Config.LANGUAGE_SELECTOR, editor.document);
+            const isSbFile = editor?.document && vscode.languages.match(CONFIG.LANGUAGE_SELECTOR, editor.document);
             this.button[isSbFile ? 'show' : 'hide']();
         };
 

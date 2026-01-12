@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { GtaVersionManager } from '../../../../../shared/src/gta-version-manager';
-import { Singleton } from '../../../../../shared/src/singleton';
-import { StorageDataManager, StorageKey } from '../../../../../shared/src/storage-data-manager';
+import { GtaVersionManager } from '@shared';
+import { Singleton } from '@shared';
+import { StorageDataManager, StorageKey } from '@shared';
 
 export type EnumInfo = {
     name: string;

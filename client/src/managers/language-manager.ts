@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { FolderManager } from './folder-manager';
 import { type GtaVersion, GtaVersionManager } from '@shared';
 import { Singleton } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
@@ -54,11 +53,6 @@ export class LanguageManager extends Singleton {
     }
 
     public async importPatterns(): Promise<void> {
-        if (!this.storageDataManager.hasStorageDataEmpty(StorageKey.Sb4FolderPath)) {
-            await FolderManager.getInstance().handleFolderSelection();
-            return;
-        }
-
         const grammarPath = this.getGrammarPath();
         this.ensureGrammarFileExists(grammarPath);
 

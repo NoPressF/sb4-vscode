@@ -11,7 +11,8 @@ export const SEARCH_TYPE: Record<string, SearchType> = {
     'Classes & members': SearchType.CLASSES
 };
 
-export const Config = Object.freeze({
+export const CONFIG = Object.freeze({
     LANGUAGE_SELECTOR: { language: 'sb', scheme: 'file' },
-    SANNY_EXE: 'sanny.exe'
+    SANNY_EXE: 'sanny.exe',
+    SELECT_FOLDER_LABEL: 'Select SB4 Folder'
 });

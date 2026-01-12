@@ -49,19 +49,19 @@
     "commands": [
       {
         "command": "sb4.selectFolder",
-        "title": "Select SB4 Folder"
+        "title": "SB4: Select SB4 Folder"
       },
       {
         "command": "sb4.compileScript",
-        "title": "Compile Script"
+        "title": "SB4: Compile Script"
       },
       {
         "command": "sb4.decompileScript",
-        "title": "Decompile Script"
+        "title": "SB4: Decompile Script"
       },
       {
         "command": "sb4.searchOpcodes",
-        "title": "Show Opcodes"
+        "title": "SB4: Search Opcodes"
       }
     ],
     "keybindings": [

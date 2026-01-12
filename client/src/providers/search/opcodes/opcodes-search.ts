@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
-import { FolderManager } from '../../../managers/folder-manager';
-import { Singleton } from '@shared';
-import { StorageDataManager, StorageKey } from '@shared';
+import { Singleton, StorageKey, StorageDataManager } from '@shared';
 import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
 import { CommandProcessor } from './command-processor';
 import { MessageCommand } from './types';
+import { FolderManager } from '../../../managers/folder-manager';
 
 export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
@@ -15,12 +14,13 @@ export class OpcodesSearch extends Singleton {
 
     public init(context: vscode.ExtensionContext) {
         this.context = context;
+
         this.create(context);
     }
 
     private create(context: vscode.ExtensionContext) {
         const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', () => {
-            if (!this.storageDataManager.hasStorageDataEmpty(StorageKey.Sb4FolderPath)) {
+            if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
                 this.folderManager.handleFolderSelection();
                 return;
             }
@@ -29,7 +29,7 @@ export class OpcodesSearch extends Singleton {
 
             const iconPath = this.webViewManager.getFileUri(this.context.asAbsolutePath('images/logo.jpg'));
 
-            this.webViewManager.createPanel('opcodes-view', 'Search Opcodes', iconPath);
+            this.webViewManager.createPanel('opcodes-view', 'SB4: Search Opcodes', iconPath);
             this.setupWebViewHandlers();
             this.updateWebviewContent();
         });

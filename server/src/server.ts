@@ -69,7 +69,7 @@ connection.onInitialized(() => {
 		connection.workspace.onDidChangeWorkspaceFolders(_event => { });
 	}
 
-	initEnum();
+	//initEnum(); // FIXME: Doesn't work
 });
 
 connection.onDidChangeConfiguration(_ => {
@@ -165,8 +165,6 @@ connection.onCompletionResolve(
 // 		if (!document) return [];
 
 // 		return [{label: 'TypeScript', kind: CompletionItemKind.Text, data: 1}];
-
-		
 
 // 		// return [
 // 		// 	...enumCompletionProvider.getCompletionItems(document, params.position)

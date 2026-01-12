@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { BaseSearchProvider } from './base-search-provider';
-import { Config } from '../../config';
+import { CONFIG } from '../../config';
 
 export class DefinitionSearch extends BaseSearchProvider {
     protected registerProvider(): void {
-        const provider = vscode.languages.registerDefinitionProvider(Config.LANGUAGE_SELECTOR, {
+        const provider = vscode.languages.registerDefinitionProvider(CONFIG.LANGUAGE_SELECTOR, {
             provideDefinition: (document, position) => {
                 const wordRange = document.getWordRangeAtPosition(position, /(@?\w+)/);
                 const symbol = document.getText(wordRange).replace('@', '');

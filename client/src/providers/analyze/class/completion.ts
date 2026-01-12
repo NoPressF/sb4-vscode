@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { Class } from './class';
 import { Singleton } from '@shared';
-import { Config } from '../../../config';
+import { CONFIG } from '../../../config';
 
 export class ClassCompletionProvider extends Singleton implements vscode.CompletionItemProvider {
     private context!: vscode.ExtensionContext;
@@ -41,7 +41,7 @@ export class ClassCompletionProvider extends Singleton implements vscode.Complet
     private registerProvider() {
         this.context.subscriptions.push(
             vscode.languages.registerCompletionItemProvider(
-                Config.LANGUAGE_SELECTOR,
+                CONFIG.LANGUAGE_SELECTOR,
                 this,
                 '.', '(', ',', ' '
             )

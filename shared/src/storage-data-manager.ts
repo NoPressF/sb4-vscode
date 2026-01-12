@@ -13,7 +13,7 @@ export class StorageDataManager extends Singleton {
         this.context = context;
     }
 
-    public hasStorageDataEmpty(key: StorageKey): boolean | undefined {
+    public hasStorageData(key: StorageKey): boolean | undefined {
         return this.getStorageData(key);
     }
 

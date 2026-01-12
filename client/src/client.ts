@@ -7,12 +7,12 @@ import {
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient/node';
-import { Config } from './config';
+import { CONFIG } from './config';
 
 let client: LanguageClient;
 
-export function clientInit(context: ExtensionContext) {
-	const serverModule = context.asAbsolutePath(path.join('server', 'out', 'server.js'));
+export function clientActivate(context: ExtensionContext) {
+	const serverModule = context.asAbsolutePath(path.join('dist', 'server', 'src', 'server.js'));
 	const serverOptions: ServerOptions = {
 		run: { module: serverModule, transport: TransportKind.ipc },
 		debug: {
@@ -22,7 +22,7 @@ export function clientInit(context: ExtensionContext) {
 	};
 
 	const clientOptions: LanguageClientOptions = {
-		documentSelector: [Config.LANGUAGE_SELECTOR],
+		documentSelector: [CONFIG.LANGUAGE_SELECTOR],
 		synchronize: {
 			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
 		}

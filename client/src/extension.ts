@@ -7,7 +7,7 @@ import { DecompileCommand } from './compiler-tools/decompile-command';
 import { registerSearchProviders } from './providers/search/search';
 import { GtaVersionButton } from './components/gta-version-button.component';
 import { registerClassProviders } from './providers/analyze/class/class';
-import { clientDeactivate, clientInit } from './client';
+import { clientActivate, clientDeactivate } from './client';
 
 export function activate(context: vscode.ExtensionContext) {
     const storageDataManager = StorageDataManager.getInstance();
@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
     registerSearchProviders(context);
     registerClassProviders(context);
 
-    clientInit(context);
+    clientActivate(context);
 }
 
 export function deactivate() {

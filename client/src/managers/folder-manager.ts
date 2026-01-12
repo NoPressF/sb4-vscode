@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import * as path from 'path';
+import * as fs from 'fs';
 import { Singleton } from '@shared';
 import { LanguageManager } from './language-manager';
 import { StorageDataManager, StorageKey } from '@shared';
-import { Config } from '../config';
+import { CONFIG } from '../config';
 
 export class FolderManager extends Singleton {
     private context!: vscode.ExtensionContext;
@@ -14,15 +14,19 @@ export class FolderManager extends Singleton {
     public init(context: vscode.ExtensionContext) {
         this.context = context;
         this.registerFolderCommand();
+
+        if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
+            this.handleFolderSelection();
+        }
     }
 
     async handleFolderSelection() {
         const action = await vscode.window.showErrorMessage(
             'Please select the SB4 folder first.',
-            'Select SB4 Folder'
+            CONFIG.SELECT_FOLDER_LABEL
         );
 
-        if (action === 'Select SB4 Folder') {
+        if (action === CONFIG.SELECT_FOLDER_LABEL) {
             await vscode.commands.executeCommand('sb4.selectFolder');
         }
     }
@@ -41,7 +45,7 @@ export class FolderManager extends Singleton {
             canSelectFiles: false,
             canSelectFolders: true,
             canSelectMany: false,
-            openLabel: 'Select SB4 Folder'
+            openLabel: CONFIG.SELECT_FOLDER_LABEL
         });
 
         if (!folderUri?.[0]) {
@@ -49,19 +53,19 @@ export class FolderManager extends Singleton {
         }
 
         const folderPath = folderUri[0].fsPath;
-        if (!this.validateSbFolder(folderPath)) {
+        if (!this.validateFolder(folderPath)) {
             return;
         }
 
         await this.storageDataManager.updateStorageData(StorageKey.Sb4FolderPath, folderPath);
         await this.languageManager.importPatterns();
-        await vscode.window.showInformationMessage('Path to SB4 folder was selected.');
+        await vscode.window.showInformationMessage('The path to the SB4 folder was selected.');
     }
 
-    private validateSbFolder(folderPath: string): boolean {
-        const exePath = path.join(folderPath, Config.SANNY_EXE);
+    private validateFolder(folderPath: string): boolean {
+        const exePath = path.join(folderPath, CONFIG.SANNY_EXE);
         if (!fs.existsSync(exePath)) {
-            vscode.window.showErrorMessage(`${Config.SANNY_EXE} was not found in this folder.`);
+            vscode.window.showErrorMessage(`${CONFIG.SANNY_EXE} was not found in this folder.`);
             return false;
         }
         return true;

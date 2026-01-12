@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { promises as fsp } from 'fs';
 import * as fs from 'fs';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
@@ -87,7 +88,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     }
 
     private async execute() {
-        if (!this.storageDataManager.hasStorageDataEmpty(StorageKey.Sb4FolderPath)) {
+        if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
             return;
         }
 
@@ -108,7 +109,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
         const args = this.getArgs(filePath, executeOptions.flag);
 
         if (logPath !== null) {
-            await fs.promises.unlink(logPath).catch(() => { });
+            await fsp.unlink(logPath).catch(() => { });
         }
 
         await vscode.window.withProgress({
@@ -130,7 +131,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     private async handleProcessClose(logPath: string | null, filePath: string, resolve: () => void, reject: (reason?: any) => void) {
         try {
             if (logPath !== null) {
-                await fs.promises.access(logPath);
+                await fsp.access(logPath);
 
                 const content = await this.readLogFile(logPath);
                 this.handleLogContent(content, filePath, resolve);
@@ -142,12 +143,12 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
 
         resolve();
         if (logPath !== null) {
-            await fs.promises.unlink(logPath);
+            await fsp.unlink(logPath);
         }
     }
 
     private async readLogFile(logPath: string): Promise<string> {
-        const buffer = await fs.promises.readFile(logPath);
+        const buffer = fs.readFileSync(logPath);
         return iconv.decode(buffer, 'win1251');
     }
 

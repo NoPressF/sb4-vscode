@@ -42,6 +42,7 @@ After installing the extension, you need to specify the path to the Sanny Builde
 This extension is distributed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ## Tasks
+- [ ] Move some stuff to the server side 
 - [ ] Highlight gxt strings
 ---
 
