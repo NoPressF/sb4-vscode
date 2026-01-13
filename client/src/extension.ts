@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { StorageDataManager } from '@shared';
+import { GtaVersionManager, StorageDataManager } from '@shared';
 import { FolderManager } from './managers/folder-manager';
 import { LanguageManager } from './managers/language-manager';
 import { CompileCommand } from './compiler-tools/compile-command';
@@ -11,6 +11,7 @@ import { clientActivate, clientDeactivate } from './client';
 
 export function activate(context: vscode.ExtensionContext) {
     const storageDataManager = StorageDataManager.getInstance();
+    const gtaVersionManager = GtaVersionManager.getInstance();
     const folderManager = FolderManager.getInstance();
     const languageManager = LanguageManager.getInstance();
     const gtaVersionButton = GtaVersionButton.getInstance();
@@ -18,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
     const decompileCommand = DecompileCommand.getInstance();
 
     storageDataManager.init(context);
+    gtaVersionManager.init();
     folderManager.init(context);
     gtaVersionButton.init(context);
     languageManager.init(context);

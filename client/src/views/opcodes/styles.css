@@ -34,22 +34,19 @@ body {
     color: #569CD6;
 }
 
-.opcode-class {
+.opcode-class-name {
     color: #4EC9B0;
 }
 
-.opcode-type,
-.opcode-return-type {
+.opcode-return-var-type {
     color: #C586C0;
 }
 
-.opcode-name,
-.opcode-member {
+.opcode-name {
     color: #DCDCAA;
 }
 
-.opcode-param-name,
-.opcode-params {
+.opcode-param-name {
     color: #9CDCFE;
 }
 

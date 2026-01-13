@@ -35,13 +35,13 @@ export class LanguageManager extends Singleton {
     public init(context: vscode.ExtensionContext) {
         this.context = context;
 
-        this.importPatterns();
+        this.exportPatterns();
         this.applyColors();
     }
 
     public async applyColors(): Promise<void> {
         const colorsPath = path.join(this.context.extensionPath, this.SYNTAX_FOLDER, 'sb4.tm-colors.json');
-        const colors = JSON.parse(fs.readFileSync(colorsPath, 'utf8'));
+        const colors = JSON.parse(fs.readFileSync(colorsPath, 'utf-8'));
 
         if (colors?.textMateRules) {
             await vscode.workspace.getConfiguration().update(
@@ -52,7 +52,7 @@ export class LanguageManager extends Singleton {
         }
     }
 
-    public async importPatterns(): Promise<void> {
+    public async exportPatterns(): Promise<void> {
         const grammarPath = this.getGrammarPath();
         this.ensureGrammarFileExists(grammarPath);
 
@@ -79,12 +79,11 @@ export class LanguageManager extends Singleton {
     }
 
     private loadGrammar(grammarPath: string): typeof this.BASE_GRAMMAR {
-        return JSON.parse(fs.readFileSync(grammarPath, 'utf8'));
+        return JSON.parse(fs.readFileSync(grammarPath, 'utf-8'));
     }
 
     private async generatePatterns(): Promise<GrammarPattern[]> {
-        const versionData = this.gtaVersionManager.getVersionData();
-        const { functions, classes, methods, enums } = await this.parseGameData(versionData);
+        const { functions, classes, methods, enums } = await this.parseData();
 
         return [
             ...this.createPatterns(functions, 'function.sb'),
@@ -94,10 +93,9 @@ export class LanguageManager extends Singleton {
         ];
     }
 
-    private async parseGameData(versionData: GtaVersion): Promise<{ functions: string[]; classes: string[]; methods: string[]; enums: string[]; }> {
-        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        const functionsData = this.loadFunctionNames(sb4FolderPath, versionData);
-        const enumsData = this.loadEnums(sb4FolderPath, versionData);
+    private async parseData(): Promise<{ functions: string[]; classes: string[]; methods: string[]; enums: string[]; }> {
+        const functionsData = this.loadFunctionNames();
+        const enumsData = this.loadEnums();
 
         return {
             functions: this.extractFunctions(functionsData),
@@ -107,19 +105,19 @@ export class LanguageManager extends Singleton {
         };
     }
 
-    private loadFunctionNames(sb4FolderPath: string, versionData: GtaVersion): FunctionNamesList {
-        const functionsPath = path.join(
-            sb4FolderPath,
-            'data',
-            versionData.identifier,
-            versionData.functionsFile
-        );
-        return JSON.parse(fs.readFileSync(functionsPath, 'utf8'));
+    private loadFunctionNames(): FunctionNamesList {
+        return JSON.parse(fs.readFileSync(this.gtaVersionManager.getFullPath(), 'utf-8'));
     }
 
-    private loadEnums(sb4FolderPath: string, versionData: GtaVersion): string {
-        const enumsPath = path.join(sb4FolderPath, 'data', versionData.identifier, 'enums.txt');
-        return fs.readFileSync(enumsPath, 'utf8');
+    private loadEnums(): string {
+        const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
+
+        if (!fs.existsSync(enumsPath)) {
+            return "";
+        }
+
+        return fs.readFileSync(enumsPath, 'utf-8');
     }
 
     private extractFunctions(data: FunctionNamesList): string[] {

@@ -1,16 +1,15 @@
-import * as path from 'path';
 import { Singleton } from '@shared';
 import { CommandArgs, CommandInfo, CommandIO, SearchType } from './types';
 import { SEARCH_TYPE, VAR_NOTATIONS } from '../../../config';
-import { StorageDataManager, StorageKey } from '@shared';
 import { GtaVersionManager } from '@shared';
 import { WebViewManager } from '../../../managers/webview-manager';
-
+import { HtmlFormatColorManager } from '../../../managers/html-format-color-manager';
 
 export class CommandProcessor extends Singleton {
     private searchType: SearchType = SearchType.OPCODES;
-    private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
+
+    private htmlFormatManager: HtmlFormatColorManager = HtmlFormatColorManager.getInstance();
 
     public setSearchType(rawSearchType: string): void {
         this.searchType = this.getNormalizedSearchType(rawSearchType);
@@ -41,15 +40,7 @@ export class CommandProcessor extends Singleton {
     }
 
     public getFunctionsList(): any {
-        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        const functionsFilePath = path.join(
-            sb4FolderPath,
-            'data',
-            this.gtaVersionManager.getIdentifier(),
-            this.gtaVersionManager.getFunctionsFile()
-        );
-
-        return WebViewManager.readJsonFile(functionsFilePath);
+        return WebViewManager.readJsonFile(this.gtaVersionManager.getFullPath());
     }
 
     private getCommandInfo(command: any): CommandInfo | null {
@@ -77,21 +68,21 @@ export class CommandProcessor extends Singleton {
     }
 
     private formatOpcodeCommandString(commandInfo: CommandInfo, commandIO: CommandIO): string {
-        let commandString = `${commandInfo.id}: `;
-        commandString += commandIO.output || '';
-        commandString += commandInfo.name ?? '';
-        commandString += ' ';
-        commandString += commandIO.input ? `${commandIO.input}` : '';
+        const address = this.htmlFormatManager.getOpcodeAddress(commandInfo.id + ":");
+        const output = commandIO.output;
+        const name = this.htmlFormatManager.getOpcodeName(commandInfo.name);
+        const input = commandIO.input;
 
-        return commandString;
+        return `${address} ${output} ${name} ${input}`;
     }
 
     public formatClassCommandString(commandInfo: CommandInfo, commandIO: CommandIO): string {
-        let commandString = commandIO.output || '';
-        commandString += `${commandInfo.class}.${commandInfo.member}`;
-        commandString += commandIO.input ? `${commandIO.input}` : '';
+        const output = commandIO.output;
+        const commandClass = this.htmlFormatManager.getOpcodeClassName(commandInfo.class);
+        const commandMember = this.htmlFormatManager.getOpcodeName(commandInfo.member);
+        const input = commandIO.input;
 
-        return commandString;
+        return `${output} ${commandClass}.${commandMember}${input}`;
     }
 
     private processCommandArgs(input?: CommandArgs[], output?: CommandArgs[]): CommandIO {
@@ -127,19 +118,21 @@ export class CommandProcessor extends Singleton {
             return '()';
         }
 
-        const formatted = input.map(arg => this.formatClassInputArg(arg)).join(', ');
-        return `(${formatted})`;
+        const args = input.map(arg => this.formatClassInputArg(arg)).join(', ');
+        return `(${args})`;
     }
 
     private formatOpcodeInputArg(args: CommandArgs): string {
         const { name, type, source } = args;
-        const formattedName = name ? `{${name}}` : '';
-        const formattedType = type ? `[${type}]` : '';
-        return [formattedName, formattedType, source].filter(Boolean).join(' ');
+
+        const argName = name ? this.htmlFormatManager.getOpcodeArgName(`{${name}}`) : '';
+        const argType = type ? this.htmlFormatManager.getOpcodeArgType(`[${type}]`) : '';
+
+        return [argName, argType, source].filter(Boolean).join(' ');
     }
 
     private formatClassInputArg(args: CommandArgs): string {
-        return args.name || '';
+        return this.htmlFormatManager.getOpcodeArgName(args.name);
     }
 
     private formatOpcodeOutputArgs(output?: CommandArgs[]): string {
@@ -159,88 +152,22 @@ export class CommandProcessor extends Singleton {
     }
 
     private formatOpcodeOutputArg(args: CommandArgs): string {
-        const { name = '', type = '', source = '' } = args;
-        const normalizedSource = `${this.getNormalizedVar(source)} `;
-        const formattedName = name.trim() ? `${name}: ` : '';
-        return `[${normalizedSource}${formattedName}${type}]`;
+        const { name, type, source } = args;
+
+        const argReturnVar = source ? `${this.htmlFormatManager.getOpcodeReturnVarType(this.getNormalizedVar(source))} ` : '';
+        const argName = name ? this.htmlFormatManager.getOpcodeArgName(name + ':') : '';
+        const argType = type ? this.htmlFormatManager.getOpcodeArgType(type) : '';
+
+        return `[${argReturnVar}${argName}${argType}]`;
     }
 
     private formatClassOutputArg(args: CommandArgs): string {
         const { name, type } = args;
-        return [name, type ? `[${type}]` : ''].filter(Boolean).join(' ');
-    }
 
-    public getHighlightOpcode(rawString: string, commandInfo: CommandInfo): string {
-        let string = rawString;
+        const argName = name ? this.htmlFormatManager.getOpcodeArgName(name) : '';
+        const argType = type ? this.htmlFormatManager.getOpcodeReturnVarType(`[${type}]`) : '';
 
-        if (this.searchType === SearchType.OPCODES) {
-            string = this.highlightOpcodeSyntax(string);
-        } else {
-            string = this.highlightClassMemberSyntax(string);
-        }
-
-        if (commandInfo.isUnsupported) {
-            string = `<s>${string}</s>`;
-        }
-
-        return string;
-    }
-
-    private highlightOpcodeSyntax(line: string): string {
-        line = line.replace(/^[0-9A-F]{4}:/g, (match: string) => {
-            return `<span class="opcode-address">${match}</span>`;
-        });
-
-        line = line.replace(/^<span class="opcode-address">[0-9A-F]{4}:<\/span>\s*([\w_]+)/g, (match: string, name: string) => {
-            return match.replace(name, `<span class="opcode-name">${name}</span>`);
-        });
-
-        line = line.replace(/\[([A-Za-z]+)\s+(\w+):\s*([A-Za-z\s]+)\]/g, (fullMatch: string, type: string, name: string, variableType: string) => {
-            return fullMatch
-                .replace(variableType, `<span class="opcode-param-type">${variableType}</span>`)
-                .replace(name, `<span class="opcode-param-name">${name}</span>`)
-                .replace(type, `<span class="opcode-type">${type}</span>`);
-        });
-
-        line = line.replace(/=\s*([\w_]+)/g, (match: string, name: string) => {
-            return match.replace(name, `<span class="opcode-name">${name}</span>`);
-        });
-
-        line = line.replace(/(\{\w+\})/g, (match: string) => {
-            return `<span class="opcode-param-name">${match}</span>`;
-        });
-
-        line = line.replace(/(\[\w+\])/g, (match: string) => {
-            return `<span class="opcode-param-type">${match}</span>`;
-        });
-
-        return line;
-    }
-
-    private highlightClassMemberSyntax(line: string): string {
-        line = line.replace(/(?<=\b)[\w]+(?=\.)/g, (match: string) => {
-            return `<span class="opcode-class">${match}</span>`;
-        });
-
-        line = line.replace(/(?<=\.)[\w]+/g, (match: string) => {
-            return `<span class="opcode-member">${match}</span>`;
-        });
-
-        line = line.replace(/\b\w+\b(?=\s*\[)/g, (match: string) => {
-            return `<span class="opcode-param-name">${match}</span>`;
-        });
-
-        line = line.replace(/\[\w+\]/g, (match: string) => {
-            return `<span class="opcode-return-type">${match}</span>`;
-        });
-
-        line = line.replace(/\(([^)]+)\)/g, (_, inside) => {
-            return `(${inside.replace(/\b\w+\b/g, (match: string) => {
-                return `<span class="opcode-params">${match}</span>`;
-            })})`;
-        });
-
-        return line;
+        return [argName, argType].filter(Boolean).join(' ');
     }
 
     private getNormalizedVar(source: string): string {

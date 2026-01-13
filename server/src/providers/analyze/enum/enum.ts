@@ -26,13 +26,18 @@ export class Enum extends Singleton {
     }
 
     public loadEnums() {
-        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        if (!sb4FolderPath) {
+        const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        if (!folderPath) {
+            throw new Error("Couldn't find the SB4 folder");
+        }
+
+        const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
+        const content = fs.readFileSync(enumsPath, 'utf-8');
+
+        if (!fs.existsSync(enumsPath)) {
             return;
         }
 
-        const enumsPath = path.join(sb4FolderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
-        const content = fs.readFileSync(enumsPath, 'utf-8');
         this.parseEnums(content);
     }
 

@@ -4,6 +4,7 @@ import { StorageDataManager, StorageKey } from '@shared';
 import { Singleton } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
 import { CONFIG } from '../config';
+import { OpcodesSearch } from '../providers/search/opcodes/opcodes-search';
 
 export class GtaVersionButton extends Singleton {
     private static readonly BUTTON_ID = 'sb4.openSettings';
@@ -53,7 +54,7 @@ export class GtaVersionButton extends Singleton {
     }
 
     private async handleVersionSelection(): Promise<void> {
-        const selected = await vscode.window.showQuickPick(this.gtaVersionManager.getVersions());
+        const selected = await vscode.window.showQuickPick(this.gtaVersionManager.parseVersions());
         if (!selected) {
             return;
         }
@@ -65,8 +66,10 @@ export class GtaVersionButton extends Singleton {
         }
 
         await this.storageDataManager.updateStorageData(StorageKey.GtaVersion, selected.label);
-        await this.languageManager.importPatterns();
-        await this.updateButtonText(selected.label);
+        await this.languageManager.exportPatterns();
+        this.updateButtonText(selected.label);
+
+        OpcodesSearch.getInstance().updateWebviewContent(true);
     }
 
     private setupEditorChangeHandler(): void {

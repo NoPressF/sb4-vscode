@@ -47,19 +47,20 @@ export class OpcodesSearch extends Singleton {
             }
         });
 
-        // this.webViewManager.registerChangeViewStateHandler(event => {
-        //     if (event.webviewPanel.visible) {
-        //         this.updateWebviewContent();
-        //     }
-        // });
+        this.webViewManager.registerChangeViewStateHandler(event => {
+            if (event.webviewPanel.visible) {
+                this.updateWebviewContent();
+            }
+        });
     }
 
-    private updateWebviewContent() {
+    public updateWebviewContent(scrollToTop: boolean = false) {
         const content = this.getOpcodesContent();
 
         const message: WebViewHandler = {
             command: 'updateOpcodes',
-            data: content
+            data: content,
+            scrollToTop: scrollToTop
         };
 
         this.webViewManager.sendMessage(message);
@@ -70,8 +71,11 @@ export class OpcodesSearch extends Singleton {
 
         return functionsContent
             .map(({ commandInfo, commandString }) => {
-                const highlightedLine = this.commandProcessor.getHighlightOpcode(commandString, commandInfo);
-                return `<div class="opcode-item">${highlightedLine}</div>`;
+                if (commandInfo.isUnsupported) {
+                    commandString = `<s>${commandString}</s>`;
+                }
+
+                return `<div class="opcode-item">${commandString}</div>`;
             })
             .join('');
     }

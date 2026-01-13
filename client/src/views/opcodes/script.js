@@ -78,7 +78,7 @@ window.addEventListener('message', (event) => {
 	if (message.command === 'updateOpcodes') {
 		updateOpcodes(message.data);
 
-		if (shouldScrollToTop) {
+		if (shouldScrollToTop || message.scrollToTop) {
 			opcodeList.scrollTop = 0;
 			shouldScrollToTop = false;
 		}

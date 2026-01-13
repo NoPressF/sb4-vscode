@@ -58,7 +58,7 @@ export class FolderManager extends Singleton {
         }
 
         await this.storageDataManager.updateStorageData(StorageKey.Sb4FolderPath, folderPath);
-        await this.languageManager.importPatterns();
+        await this.languageManager.exportPatterns();
         await vscode.window.showInformationMessage('The path to the SB4 folder was selected.');
     }
 

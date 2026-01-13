@@ -5,6 +5,7 @@ import * as fs from 'fs';
 export interface WebViewHandler {
     command: string;
     data: any;
+    scrollToTop: boolean;
 };
 
 export class WebViewManager {
@@ -47,7 +48,7 @@ export class WebViewManager {
             'index.html'
         );
 
-        let htmlContent = fs.readFileSync(templatePath, 'utf8');
+        let htmlContent = fs.readFileSync(templatePath, 'utf-8');
 
         htmlContent = htmlContent
             .replace(/{{cssUri}}/g, this.getResourceUri('styles.css'))
@@ -60,16 +61,16 @@ export class WebViewManager {
         this.panel?.webview.onDidReceiveMessage(handler);
     }
 
-    // public registerChangeViewStateHandler(handler: (event: vscode.WebviewPanelOnDidChangeViewStateEvent) => void): void {
-    //     this.panel?.onDidChangeViewState(handler);
-    // }
+    public registerChangeViewStateHandler(handler: (event: vscode.WebviewPanelOnDidChangeViewStateEvent) => void): void {
+        this.panel?.onDidChangeViewState(handler);
+    }
 
     public sendMessage(message: WebViewHandler): void {
         this.panel?.webview.postMessage(message);
     }
 
     public static readJsonFile(filePath: string): any {
-        const fileContent = fs.readFileSync(filePath, 'utf8');
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
         return JSON.parse(fileContent);
     };
 

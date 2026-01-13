@@ -8,7 +8,7 @@ export const VAR_NOTATIONS: Record<string, string> = {
 
 export const SEARCH_TYPE: Record<string, SearchType> = {
     'Opcodes': SearchType.OPCODES,
-    'Classes & members': SearchType.CLASSES
+    'Classes/members': SearchType.CLASSES
 };
 
 export const CONFIG = Object.freeze({
