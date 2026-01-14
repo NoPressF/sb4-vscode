@@ -3,15 +3,15 @@ import { GtaVersionManager } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
 import { Singleton } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
-import { CONFIG } from '../../../shared/src/config';
+import { CONFIG } from '@shared';
 import { OpcodesSearch } from '../providers/search/opcodes/opcodes-search';
 
 export class GtaVersionButton extends Singleton {
-    private static readonly BUTTON_ID = 'sb4.openSettings';
-    private static readonly BUTTON_TOOLTIP = 'Open SB4 Settings';
-    private static readonly BUTTON_TEXT_DEFAULT = 'SB4';
+    private static readonly BUTTON_ID = 'sb4.gtaVersions';
+    private static readonly BUTTON_TOOLTIP = 'Open GTA Versions';
+    private static readonly BUTTON_TEXT_DEFAULT = 'SB4 (Select version)';
     private static readonly BUTTON_TEXT_FORMAT = (version: string) =>
-        `${GtaVersionButton.BUTTON_TEXT_DEFAULT} (${version})`;
+        `SB4 (${version})`;
 
     private context!: vscode.ExtensionContext;
     private button!: vscode.StatusBarItem;
@@ -53,8 +53,21 @@ export class GtaVersionButton extends Singleton {
         this.context.subscriptions.push(disposable);
     }
 
-    private async handleVersionSelection(): Promise<void> {
-        const selected = await vscode.window.showQuickPick(this.gtaVersionManager.parseVersions());
+    public async showErrorMessageNotFoundAnyVersion() {
+        await vscode.window.showErrorMessage(
+            "SB4 folder doesn't contain any of GTA Version"
+        );
+    }
+
+    private async handleVersionSelection() {
+        const versions = this.gtaVersionManager.parseVersions();
+
+        if (!versions.length) {
+            this.showErrorMessageNotFoundAnyVersion();
+            return;
+        }
+
+        const selected = await vscode.window.showQuickPick(versions);
         if (!selected) {
             return;
         }

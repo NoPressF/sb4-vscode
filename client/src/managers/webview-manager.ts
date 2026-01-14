@@ -29,6 +29,10 @@ export class WebViewManager {
 
         this.loadTemplate();
 
+        this.panel.onDidDispose(() => {
+            this.dispose();
+        });
+
         if (iconPath) {
             this.panel.iconPath = {
                 light: iconPath,
@@ -38,7 +42,7 @@ export class WebViewManager {
     }
 
     private loadTemplate(): void {
-        if (!this.panel) {
+        if (this.isPanelDisposed()) {
             return;
         }
 
@@ -54,7 +58,7 @@ export class WebViewManager {
             .replace(/{{cssUri}}/g, this.getResourceUri('styles.css'))
             .replace(/{{jsUri}}/g, this.getResourceUri('script.js'));
 
-        this.panel.webview.html = htmlContent;
+        this.panel!.webview.html = htmlContent;
     }
 
     public registerMessageHandler(handler: (message: any) => void): void {
@@ -78,13 +82,18 @@ export class WebViewManager {
         return vscode.Uri.file(path);
     }
 
-    private getResourceUri(filename: string): string {
+    private getResourceUri(fileName: string): string {
         return this.panel!.webview.asWebviewUri(
-            this.getFileUri(path.join(this.context.extensionPath, this.basePath, filename))
+            this.getFileUri(path.join(this.context.extensionPath, this.basePath, fileName))
         ).toString();
     }
 
-    public dispose(): void {
+    public isPanelDisposed(): boolean {
+        return !this.panel;
+    }
+
+    public dispose() {
         this.panel?.dispose();
+        this.panel = undefined;
     }
 }

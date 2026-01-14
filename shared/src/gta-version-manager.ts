@@ -28,7 +28,7 @@ export class GtaVersionManager extends Singleton {
             const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
 
             if (!folderPath) {
-                throw new Error("Couldn't find the SB4 folder");
+                return [];
             }
 
             const folderDataPath = path.join(folderPath, 'data');
@@ -79,33 +79,39 @@ export class GtaVersionManager extends Singleton {
             }
 
         } catch (err) {
-            throw new Error(`Error reading directory: ${err}`);
+            throw new Error(`Error parse the versions: ${err}`);
         }
 
         return this.GTA_VERSIONS;
     }
 
-    public getVersionData(): GtaVersion {
+    public getVersionData(): GtaVersion | undefined {
         const gtaVersion = this.storageDataManager.getStorageData(StorageKey.GtaVersion) as string;
 
-        if (!gtaVersion) {
-            throw new Error('GTA version not found');
-        }
+        return this.GTA_VERSIONS.find(v => v.label === gtaVersion);
+    }
 
-        let versionData = this.GTA_VERSIONS.find(v => v.label === gtaVersion);
+    public hasVersionDataExists(): boolean {
+        return this.getVersionData() !== undefined;
+    }
+
+    public getIdentifier(): string | undefined {
+        const versionData = this.getVersionData();
 
         if (!versionData) {
-            versionData = this.GTA_VERSIONS[0];
+            return undefined;
         }
 
-        return versionData;
+        return versionData.identifier;
     }
 
-    public getIdentifier(): string {
-        return this.getVersionData().identifier;
-    }
+    public getFullPath(): string | undefined {
+        const versionData = this.getVersionData();
 
-    public getFullPath(): string {
-        return this.getVersionData().fullPath;
+        if (!versionData) {
+            return undefined;
+        }
+
+        return versionData.fullPath;
     }
 }

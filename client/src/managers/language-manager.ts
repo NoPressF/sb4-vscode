@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { type GtaVersion, GtaVersionManager } from '@shared';
+import { GtaVersionManager } from '@shared';
 import { Singleton } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
+import { GtaVersionButton } from '../components/gta-version-button.component';
 
 interface GrammarPattern {
     match: string;
@@ -39,7 +40,7 @@ export class LanguageManager extends Singleton {
         this.applyColors();
     }
 
-    public async applyColors(): Promise<void> {
+    public async applyColors() {
         const colorsPath = path.join(this.context.extensionPath, this.SYNTAX_FOLDER, 'sb4.tm-colors.json');
         const colors = JSON.parse(fs.readFileSync(colorsPath, 'utf-8'));
 
@@ -52,7 +53,12 @@ export class LanguageManager extends Singleton {
         }
     }
 
-    public async exportPatterns(): Promise<void> {
+    public async exportPatterns() {
+        if (!this.gtaVersionManager.hasVersionDataExists()) {
+            GtaVersionButton.getInstance().showErrorMessageNotFoundAnyVersion();
+            return;
+        }
+
         const grammarPath = this.getGrammarPath();
         this.ensureGrammarFileExists(grammarPath);
 
@@ -70,7 +76,7 @@ export class LanguageManager extends Singleton {
         );
     }
 
-    private ensureGrammarFileExists(grammarPath: string): void {
+    private ensureGrammarFileExists(grammarPath: string) {
         if (fs.existsSync(grammarPath)) {
             return;
         }
@@ -94,8 +100,8 @@ export class LanguageManager extends Singleton {
     }
 
     private async parseData(): Promise<{ functions: string[]; classes: string[]; methods: string[]; enums: string[]; }> {
-        const functionsData = this.loadFunctionNames();
-        const enumsData = this.loadEnums();
+        const functionsData = this.parseFunctionNames();
+        const enumsData = this.parseEnums();
 
         return {
             functions: this.extractFunctions(functionsData),
@@ -105,13 +111,18 @@ export class LanguageManager extends Singleton {
         };
     }
 
-    private loadFunctionNames(): FunctionNamesList {
-        return JSON.parse(fs.readFileSync(this.gtaVersionManager.getFullPath(), 'utf-8'));
+    private parseFunctionNames(): FunctionNamesList {
+        return JSON.parse(fs.readFileSync(this.gtaVersionManager.getFullPath()!, 'utf-8'));
     }
 
-    private loadEnums(): string {
+    private parseEnums(): string {
         const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-        const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
+
+        if (!folderPath) {
+            return "";
+        }
+
+        const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier()!, 'enums.txt');
 
         if (!fs.existsSync(enumsPath)) {
             return "";
@@ -151,8 +162,10 @@ export class LanguageManager extends Singleton {
     }
 
     private createPatterns(items: string[], name: string): GrammarPattern[] {
-        return items.length > 0
-            ? [{ match: `\\b(${items.join('|')})\\b`, name }]
-            : [];
+        if (!items.length) {
+            return [];
+        }
+
+        return [{ match: `\\b(${items.join('|')})\\b`, name }];
     }
 }

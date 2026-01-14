@@ -19,8 +19,6 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
-import { initEnum } from './providers/analyze/enum/enum';
-
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 const documentSettings = new Map<string, Thenable<void>>();

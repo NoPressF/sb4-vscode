@@ -8,6 +8,7 @@ import { CompilerTools } from './compiler-tools';
 import { Singleton } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
 import { GtaVersionManager } from '@shared';
+import { FolderManager } from '../managers/folder-manager';
 
 export enum ExecuteType {
     COMPILE,
@@ -31,6 +32,8 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     private compilerTools: CompilerTools = CompilerTools.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
+
+    private folderManager: FolderManager = FolderManager.getInstance();
 
     private readonly executeOptions: Record<ExecuteType, ExecuteInfo> = {
         [ExecuteType.COMPILE]: {
@@ -81,7 +84,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
         return [
             '--no-splash',
             '--mode',
-            this.gtaVersionManager.getIdentifier(),
+            this.gtaVersionManager.getIdentifier()!,
             `--${flag}`,
             filePath
         ];
@@ -101,11 +104,17 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     }
 
     private async executeOperation(filePath: string) {
-        const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+
+        if (!folderPath) {
+            this.folderManager.showErrorMessageSelectFolder();
+            return;
+        }
+
         const executeOptions = this.executeOptions[this.executeType];
         const logFileName = executeOptions.logFileName;
 
-        const logPath = logFileName ? path.join(sb4FolderPath, logFileName) : null;
+        const logPath = logFileName ? path.join(folderPath, logFileName) : null;
         const args = this.getArgs(filePath, executeOptions.flag);
 
         if (logPath !== null) {
@@ -116,7 +125,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
             location: vscode.ProgressLocation.Window,
             title: executeOptions.operationTitle,
             cancellable: false
-        }, async () => this.runCompilerProcess(logPath, filePath, sb4FolderPath, args));
+        }, async () => this.runCompilerProcess(logPath, filePath, folderPath, args));
     }
 
     private async runCompilerProcess(logPath: string | null, filePath: string, sb4FolderPath: string, args: string[]): Promise<void> {

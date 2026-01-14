@@ -1,6 +1,6 @@
 import { Singleton } from '@shared';
-import { CommandArgs, CommandInfo, CommandIO, SearchType } from '../../../../../shared/src/types';
-import { SEARCH_TYPE, VAR_NOTATIONS } from '../../../../../shared/src/config';
+import { CommandArgs, CommandInfo, CommandIO, SearchType } from '@shared';
+import { SEARCH_TYPE, VAR_NOTATIONS } from '@shared';
 import { GtaVersionManager } from '@shared';
 import { WebViewManager } from '../../../managers/webview-manager';
 import { HtmlFormatColorManager } from '../../../managers/html-format-color-manager';
@@ -15,11 +15,11 @@ export class CommandProcessor extends Singleton {
         this.searchType = this.getNormalizedSearchType(rawSearchType);
     }
 
-    public processCommands(): { commandInfo: CommandInfo, commandString: string }[] {
-        const functionsList = this.getFunctionsList();
-        const functionsContent: { commandInfo: CommandInfo, commandString: string }[] = [];
+    public process(): { commandInfo: CommandInfo, commandString: string }[] {
+        const list = this.getFunctionsList();
+        const data: { commandInfo: CommandInfo, commandString: string }[] = [];
 
-        for (const extension of functionsList.extensions) {
+        for (const extension of list.extensions) {
             for (const command of extension.commands) {
                 let commandInfo = this.getCommandInfo(command);
                 if (!commandInfo) {
@@ -32,15 +32,15 @@ export class CommandProcessor extends Singleton {
 
                 const commandIO = this.processCommandArgs(command.input, command.output);
                 const commandString = this.formatCommandString(commandInfo, commandIO);
-                functionsContent.push({ commandInfo, commandString });
+                data.push({ commandInfo, commandString });
             }
         }
 
-        return functionsContent;
+        return data;
     }
 
     public getFunctionsList(): any {
-        return WebViewManager.readJsonFile(this.gtaVersionManager.getFullPath());
+        return WebViewManager.readJsonFile(this.gtaVersionManager.getFullPath()!);
     }
 
     private getCommandInfo(command: any): CommandInfo | null {

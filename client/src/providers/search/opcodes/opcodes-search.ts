@@ -1,15 +1,17 @@
 import * as vscode from 'vscode';
-import { Singleton, StorageKey, StorageDataManager } from '@shared';
+import { Singleton, StorageKey, StorageDataManager, GtaVersionManager } from '@shared';
 import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
 import { CommandProcessor } from './command-processor';
-import { MessageCommand } from '../../../../../shared/src/types';
+import { MessageCommand } from '@shared';
 import { FolderManager } from '../../../managers/folder-manager';
+import { GtaVersionButton } from '../../../components/gta-version-button.component';
 
 export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
     private webViewManager!: WebViewManager;
     private folderManager: FolderManager = FolderManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
+    private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
     private commandProcessor: CommandProcessor = CommandProcessor.getInstance();
 
     public init(context: vscode.ExtensionContext) {
@@ -21,7 +23,12 @@ export class OpcodesSearch extends Singleton {
     private create(context: vscode.ExtensionContext) {
         const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', () => {
             if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
-                this.folderManager.handleFolderSelection();
+                this.folderManager.showErrorMessageSelectFolder();
+                return;
+            }
+
+            if (!this.gtaVersionManager.hasVersionDataExists()) {
+                GtaVersionButton.getInstance().showErrorMessageNotFoundAnyVersion();
                 return;
             }
 
@@ -30,6 +37,7 @@ export class OpcodesSearch extends Singleton {
             const iconPath = this.webViewManager.getFileUri(this.context.asAbsolutePath('images/logo.jpg'));
 
             this.webViewManager.createPanel('opcodes-view', 'SB4: Search Opcodes', iconPath);
+
             this.setupWebViewHandlers();
             this.updateWebviewContent();
         });
@@ -37,7 +45,7 @@ export class OpcodesSearch extends Singleton {
         this.context.subscriptions.push(disposable);
     }
 
-    private setupWebViewHandlers(): void {
+    private setupWebViewHandlers() {
         this.webViewManager.registerMessageHandler(message => {
             switch (message.command) {
                 case MessageCommand.UPDATE_SEARCH_TYPE:
@@ -55,7 +63,11 @@ export class OpcodesSearch extends Singleton {
     }
 
     public updateWebviewContent(scrollToTop: boolean = false) {
-        const content = this.getOpcodesContent();
+        if (this.webViewManager === undefined || this.webViewManager.isPanelDisposed()) {
+            return;
+        }
+
+        const content = this.getContent();
 
         const message: WebViewHandler = {
             command: 'updateOpcodes',
@@ -66,8 +78,8 @@ export class OpcodesSearch extends Singleton {
         this.webViewManager.sendMessage(message);
     }
 
-    private getOpcodesContent(): string {
-        const functionsContent = this.commandProcessor.processCommands();
+    private getContent(): string {
+        const functionsContent = this.commandProcessor.process();
 
         return functionsContent
             .map(({ commandInfo, commandString }) => {
