@@ -6,7 +6,6 @@ import { CompileCommand } from './compiler-tools/compile-command';
 import { DecompileCommand } from './compiler-tools/decompile-command';
 import { registerSearchProviders } from './providers/search/search';
 import { GtaVersionButton } from './components/gta-version-button.component';
-import { registerClassProviders } from './providers/analyze/class/class';
 import { clientActivate, clientDeactivate } from './client';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -27,7 +26,6 @@ export function activate(context: vscode.ExtensionContext) {
     decompileCommand.init(context);
 
     registerSearchProviders(context);
-    registerClassProviders(context);
 
     clientActivate(context);
 }

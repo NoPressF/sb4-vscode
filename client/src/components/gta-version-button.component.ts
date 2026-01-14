@@ -3,7 +3,7 @@ import { GtaVersionManager } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
 import { Singleton } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
-import { CONFIG } from '../config';
+import { CONFIG } from '../../../shared/src/config';
 import { OpcodesSearch } from '../providers/search/opcodes/opcodes-search';
 
 export class GtaVersionButton extends Singleton {

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { Singleton } from '@shared';
 import { LanguageManager } from './language-manager';
 import { StorageDataManager, StorageKey } from '@shared';
-import { CONFIG } from '../config';
+import { CONFIG } from '../../../shared/src/config';
 
 export class FolderManager extends Singleton {
     private context!: vscode.ExtensionContext;

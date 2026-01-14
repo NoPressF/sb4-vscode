@@ -7,7 +7,7 @@ import {
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient/node';
-import { CONFIG } from './config';
+import { CONFIG } from '@shared';
 
 let client: LanguageClient;
 

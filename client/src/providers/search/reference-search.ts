@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { BaseSearchProvider } from './base-search-provider';
-import { CONFIG } from '../../config';
+import { CONFIG } from '../../../../shared/src/config';
 
 export class ReferenceSearch extends BaseSearchProvider {
     protected registerProvider(): void {

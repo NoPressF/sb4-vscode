@@ -1,4 +1,4 @@
-import { SearchType } from './providers/search/opcodes/types';
+import { SearchType } from './types';
 
 export const VAR_NOTATIONS: Record<string, string> = {
     'var_any': 'var',

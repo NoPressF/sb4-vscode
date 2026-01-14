@@ -1,6 +1,6 @@
 import { Singleton } from '@shared';
-import { CommandArgs, CommandInfo, CommandIO, SearchType } from './types';
-import { SEARCH_TYPE, VAR_NOTATIONS } from '../../../config';
+import { CommandArgs, CommandInfo, CommandIO, SearchType } from '../../../../../shared/src/types';
+import { SEARCH_TYPE, VAR_NOTATIONS } from '../../../../../shared/src/config';
 import { GtaVersionManager } from '@shared';
 import { WebViewManager } from '../../../managers/webview-manager';
 import { HtmlFormatColorManager } from '../../../managers/html-format-color-manager';

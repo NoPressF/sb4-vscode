@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { Singleton, StorageKey, StorageDataManager } from '@shared';
 import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
 import { CommandProcessor } from './command-processor';
-import { MessageCommand } from './types';
+import { MessageCommand } from '../../../../../shared/src/types';
 import { FolderManager } from '../../../managers/folder-manager';
 
 export class OpcodesSearch extends Singleton {
