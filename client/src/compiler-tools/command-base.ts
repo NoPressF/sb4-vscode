@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fsp } from 'fs';
-import * as fs from 'fs';
+import { isFileExists } from '@shared';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
 import { CompilerTools } from './compiler-tools';
@@ -128,9 +128,9 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
         }, async () => this.runCompilerProcess(logPath, filePath, folderPath, args));
     }
 
-    private async runCompilerProcess(logPath: string | null, filePath: string, sb4FolderPath: string, args: string[]): Promise<void> {
+    private async runCompilerProcess(logPath: string | null, filePath: string, folderPath: string, args: string[]): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
-            const child = spawn(path.join(sb4FolderPath, 'sanny.exe'), args);
+            const child = spawn(path.join(folderPath, 'sanny.exe'), args);
 
             child.on('close', async () => this.handleProcessClose(logPath, filePath, resolve, reject));
             child.on('error', err => this.handleProcessError(err, reject));
@@ -143,7 +143,8 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
                 await fsp.access(logPath);
 
                 const content = await this.readLogFile(logPath);
-                this.handleLogContent(content, filePath, resolve);
+
+                this.handleLogContent(content, filePath);
             }
 
         } catch (error) {
@@ -152,16 +153,19 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
 
         resolve();
         if (logPath !== null) {
-            await fsp.unlink(logPath);
+            if (await isFileExists(logPath)) {
+                await fsp.unlink(logPath);
+            }
         }
+
     }
 
     private async readLogFile(logPath: string): Promise<string> {
-        const buffer = fs.readFileSync(logPath);
+        const buffer = await fsp.readFile(logPath);
         return iconv.decode(buffer, 'win1251');
     }
 
-    private handleLogContent(content: string, filePath: string, resolve: () => void) {
+    private handleLogContent(content: string, filePath: string) {
         const executeOptions = this.executeOptions[this.executeType];
         if (content === null || content.trim() === '') {
             vscode.window.showInformationMessage(`✅ ${executeOptions.successMessage}`);
