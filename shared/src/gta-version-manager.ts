@@ -1,5 +1,5 @@
-import { Singleton } from '@shared';
-import * as fs from 'fs';
+import { isFileExists, Singleton } from '@shared';
+import { promises as fsp } from 'fs';
 import * as path from 'path';
 import { XMLParser } from 'fast-xml-parser';
 import { StorageDataManager, StorageKey } from './storage-data-manager';
@@ -16,11 +16,11 @@ export class GtaVersionManager extends Singleton {
 
     private GTA_VERSIONS: GtaVersion[] = [];
 
-    public init() {
-        this.parseVersions();
+    public async init() {
+        await this.parseVersions();
     }
 
-    public parseVersions(): GtaVersion[] {
+    public async parseVersions(): Promise<GtaVersion[]> {
 
         try {
             this.GTA_VERSIONS = [];
@@ -31,28 +31,28 @@ export class GtaVersionManager extends Singleton {
                 return [];
             }
 
-            const folderDataPath = path.join(folderPath, 'data');
-            const files = fs.readdirSync(folderDataPath);
-
             const parser = new XMLParser({
                 ignoreAttributes: false,
                 textNodeName: "#text"
             });
 
+            const folderDataPath = path.join(folderPath, 'data');
+            const files = await fsp.readdir(folderDataPath);
+
             for (const file of files) {
                 const folderGtaVersionPath = path.join(folderDataPath, file);
 
-                if (!fs.statSync(folderGtaVersionPath).isDirectory()) {
+                if (!(await fsp.stat(folderGtaVersionPath)).isDirectory()) {
                     continue;
                 }
 
                 const modeXmlPath = path.join(folderGtaVersionPath, 'mode.xml');
 
-                if (!fs.existsSync(modeXmlPath)) {
+                if (!await isFileExists(modeXmlPath)) {
                     continue;
                 }
 
-                const xmlContent = fs.readFileSync(modeXmlPath, 'utf-8');
+                const xmlContent = await fsp.readFile(modeXmlPath, 'utf-8');
 
                 const parseData = parser.parse(xmlContent);
                 const library = parseData.mode?.library;

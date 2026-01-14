@@ -60,7 +60,7 @@ export class GtaVersionButton extends Singleton {
     }
 
     private async handleVersionSelection() {
-        const versions = this.gtaVersionManager.parseVersions();
+        const versions = await this.gtaVersionManager.parseVersions();
 
         if (!versions.length) {
             this.showErrorMessageNotFoundAnyVersion();
@@ -82,7 +82,7 @@ export class GtaVersionButton extends Singleton {
         await this.languageManager.exportPatterns();
         this.updateButtonText(selected.label);
 
-        OpcodesSearch.getInstance().updateWebviewContent(true);
+        await OpcodesSearch.getInstance().updateWebviewContent(true);
     }
 
     private setupEditorChangeHandler(): void {

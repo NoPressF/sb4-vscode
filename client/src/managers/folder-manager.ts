@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
-import { Singleton } from '@shared';
+import { isFileExists, Singleton } from '@shared';
 import { LanguageManager } from './language-manager';
 import { StorageDataManager, StorageKey } from '@shared';
 import { CONFIG } from '@shared';
@@ -53,7 +52,7 @@ export class FolderManager extends Singleton {
         }
 
         const folderPath = folderUri[0].fsPath;
-        if (!this.validateFolder(folderPath)) {
+        if (!await this.validateFolder(folderPath)) {
             return;
         }
 
@@ -62,9 +61,9 @@ export class FolderManager extends Singleton {
         await vscode.window.showInformationMessage('The path to the SB4 folder was selected.');
     }
 
-    private validateFolder(folderPath: string): boolean {
+    private async validateFolder(folderPath: string): Promise<boolean> {
         const exePath = path.join(folderPath, CONFIG.SANNY_EXE);
-        if (!fs.existsSync(exePath)) {
+        if (!await isFileExists(exePath)) {
             vscode.window.showErrorMessage(`${CONFIG.SANNY_EXE} was not found in this folder.`);
             return false;
         }

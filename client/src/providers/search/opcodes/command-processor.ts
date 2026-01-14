@@ -15,8 +15,8 @@ export class CommandProcessor extends Singleton {
         this.searchType = this.getNormalizedSearchType(rawSearchType);
     }
 
-    public process(): { commandInfo: CommandInfo, commandString: string }[] {
-        const list = this.getFunctionsList();
+    public async process(): Promise<{ commandInfo: CommandInfo; commandString: string; }[]> {
+        const list = await this.getFunctionsList();
         const data: { commandInfo: CommandInfo, commandString: string }[] = [];
 
         for (const extension of list.extensions) {
@@ -39,8 +39,8 @@ export class CommandProcessor extends Singleton {
         return data;
     }
 
-    public getFunctionsList(): any {
-        return WebViewManager.readJsonFile(this.gtaVersionManager.getFullPath()!);
+    public async getFunctionsList(): Promise<any> {
+        return await WebViewManager.readJsonFile(this.gtaVersionManager.getFullPath()!);
     }
 
     private getCommandInfo(command: any): CommandInfo | null {

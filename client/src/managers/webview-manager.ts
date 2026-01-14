@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
+import { promises as fsp } from 'fs';
 
 export interface WebViewHandler {
     command: string;
@@ -41,7 +41,7 @@ export class WebViewManager {
         }
     }
 
-    private loadTemplate(): void {
+    private async loadTemplate() {
         if (this.isPanelDisposed()) {
             return;
         }
@@ -52,7 +52,7 @@ export class WebViewManager {
             'index.html'
         );
 
-        let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+        let htmlContent = await fsp.readFile(templatePath, 'utf-8');
 
         htmlContent = htmlContent
             .replace(/{{cssUri}}/g, this.getResourceUri('styles.css'))
@@ -61,20 +61,20 @@ export class WebViewManager {
         this.panel!.webview.html = htmlContent;
     }
 
-    public registerMessageHandler(handler: (message: any) => void): void {
+    public registerMessageHandler(handler: (message: any) => void)    {
         this.panel?.webview.onDidReceiveMessage(handler);
     }
 
-    public registerChangeViewStateHandler(handler: (event: vscode.WebviewPanelOnDidChangeViewStateEvent) => void): void {
+    public registerChangeViewStateHandler(handler: (event: vscode.WebviewPanelOnDidChangeViewStateEvent) => void) {
         this.panel?.onDidChangeViewState(handler);
     }
 
-    public sendMessage(message: WebViewHandler): void {
+    public sendMessage(message: WebViewHandler) {
         this.panel?.webview.postMessage(message);
     }
 
-    public static readJsonFile(filePath: string): any {
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
+    public static async readJsonFile(filePath: string): Promise<any> {
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
         return JSON.parse(fileContent);
     };
 

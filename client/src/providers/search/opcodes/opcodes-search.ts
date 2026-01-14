@@ -21,7 +21,7 @@ export class OpcodesSearch extends Singleton {
     }
 
     private create(context: vscode.ExtensionContext) {
-        const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', () => {
+        const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', async () => {
             if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
                 this.folderManager.showErrorMessageSelectFolder();
                 return;
@@ -39,35 +39,35 @@ export class OpcodesSearch extends Singleton {
             this.webViewManager.createPanel('opcodes-view', 'SB4: Search Opcodes', iconPath);
 
             this.setupWebViewHandlers();
-            this.updateWebviewContent();
+            await this.updateWebviewContent();
         });
 
         this.context.subscriptions.push(disposable);
     }
 
     private setupWebViewHandlers() {
-        this.webViewManager.registerMessageHandler(message => {
+        this.webViewManager.registerMessageHandler(async message => {
             switch (message.command) {
                 case MessageCommand.UPDATE_SEARCH_TYPE:
                     this.commandProcessor.setSearchType(message.type);
-                    this.updateWebviewContent();
+                    await this.updateWebviewContent();
                     break;
             }
         });
 
-        this.webViewManager.registerChangeViewStateHandler(event => {
+        this.webViewManager.registerChangeViewStateHandler(async event => {
             if (event.webviewPanel.visible) {
-                this.updateWebviewContent();
+                await this.updateWebviewContent();
             }
         });
     }
 
-    public updateWebviewContent(scrollToTop: boolean = false) {
+    public async updateWebviewContent(scrollToTop: boolean = false) {
         if (this.webViewManager === undefined || this.webViewManager.isPanelDisposed()) {
             return;
         }
 
-        const content = this.getContent();
+        const content = await this.getContent();
 
         const message: WebViewHandler = {
             command: 'updateOpcodes',
@@ -78,8 +78,8 @@ export class OpcodesSearch extends Singleton {
         this.webViewManager.sendMessage(message);
     }
 
-    private getContent(): string {
-        const functionsContent = this.commandProcessor.process();
+    private async getContent(): Promise<string> {
+        const functionsContent = await this.commandProcessor.process();
 
         return functionsContent
             .map(({ commandInfo, commandString }) => {

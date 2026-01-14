@@ -8,7 +8,7 @@ import { registerSearchProviders } from './providers/search/search';
 import { GtaVersionButton } from './components/gta-version-button.component';
 import { clientActivate, clientDeactivate } from './client';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     const storageDataManager = StorageDataManager.getInstance();
     const gtaVersionManager = GtaVersionManager.getInstance();
     const folderManager = FolderManager.getInstance();
@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
     const decompileCommand = DecompileCommand.getInstance();
 
     storageDataManager.init(context);
-    gtaVersionManager.init();
+    await gtaVersionManager.init();
     folderManager.init(context);
     gtaVersionButton.init(context);
     languageManager.init(context);
