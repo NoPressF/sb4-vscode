@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
+import { promises as fsp } from 'fs';
 import * as path from 'path';
-import { GtaVersionManager } from '@shared';
+import { GtaVersionManager, isFileExists } from '@shared';
 import { Singleton } from '@shared';
 import { StorageDataManager, StorageKey } from '@shared';
 import { GtaVersionButton } from '../components/gta-version-button.component';
@@ -42,7 +42,7 @@ export class LanguageManager extends Singleton {
 
     public async applyColors() {
         const colorsPath = path.join(this.context.extensionPath, this.SYNTAX_FOLDER, 'sb4.tm-colors.json');
-        const colors = JSON.parse(fs.readFileSync(colorsPath, 'utf-8'));
+        const colors = JSON.parse(await fsp.readFile(colorsPath, 'utf-8'));
 
         if (colors?.textMateRules) {
             await vscode.workspace.getConfiguration().update(
@@ -62,10 +62,10 @@ export class LanguageManager extends Singleton {
         const grammarPath = this.getGrammarPath();
         this.ensureGrammarFileExists(grammarPath);
 
-        const grammar = this.loadGrammar(grammarPath);
+        const grammar = await this.loadGrammar(grammarPath);
         grammar.patterns = await this.generatePatterns();
 
-        fs.writeFileSync(grammarPath, JSON.stringify(grammar, null, 4));
+        await fsp.writeFile(grammarPath, JSON.stringify(grammar, null, 4));
     }
 
     private getGrammarPath(): string {
@@ -76,16 +76,16 @@ export class LanguageManager extends Singleton {
         );
     }
 
-    private ensureGrammarFileExists(grammarPath: string) {
-        if (fs.existsSync(grammarPath)) {
+    private async ensureGrammarFileExists(grammarPath: string) {
+        if (await isFileExists(grammarPath)) {
             return;
         }
 
-        fs.writeFileSync(grammarPath, JSON.stringify(this.BASE_GRAMMAR, null, 4));
+        await fsp.writeFile(grammarPath, JSON.stringify(this.BASE_GRAMMAR, null, 4));
     }
 
-    private loadGrammar(grammarPath: string): typeof this.BASE_GRAMMAR {
-        return JSON.parse(fs.readFileSync(grammarPath, 'utf-8'));
+    private async loadGrammar(grammarPath: string): Promise<typeof this.BASE_GRAMMAR> {
+        return JSON.parse(await fsp.readFile(grammarPath, 'utf-8'));
     }
 
     private async generatePatterns(): Promise<GrammarPattern[]> {
@@ -100,8 +100,8 @@ export class LanguageManager extends Singleton {
     }
 
     private async parseData(): Promise<{ functions: string[]; classes: string[]; methods: string[]; enums: string[]; }> {
-        const functionsData = this.parseFunctionNames();
-        const enumsData = this.parseEnums();
+        const functionsData = await this.parseFunctionNames();
+        const enumsData = await this.parseEnums();
 
         return {
             functions: this.extractFunctions(functionsData),
@@ -111,11 +111,11 @@ export class LanguageManager extends Singleton {
         };
     }
 
-    private parseFunctionNames(): FunctionNamesList {
-        return JSON.parse(fs.readFileSync(this.gtaVersionManager.getFullPath()!, 'utf-8'));
+    private async parseFunctionNames(): Promise<FunctionNamesList> {
+        return JSON.parse(await fsp.readFile(this.gtaVersionManager.getFullPath()!, 'utf-8'));
     }
 
-    private parseEnums(): string {
+    private async parseEnums(): Promise<string> {
         const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
 
         if (!folderPath) {
@@ -124,11 +124,11 @@ export class LanguageManager extends Singleton {
 
         const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier()!, 'enums.txt');
 
-        if (!fs.existsSync(enumsPath)) {
+        if (!isFileExists(enumsPath)) {
             return "";
         }
 
-        return fs.readFileSync(enumsPath, 'utf-8');
+        return await fsp.readFile(enumsPath, 'utf-8');
     }
 
     private extractFunctions(data: FunctionNamesList): string[] {
