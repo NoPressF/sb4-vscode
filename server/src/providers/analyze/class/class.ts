@@ -29,7 +29,7 @@
 //     }
 
 //     public loadClasses() {
-//         const sb4FolderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+//         const sb4FolderPath = this.storageDataManager.getData(StorageKey.Sb4FolderPath) as string;
 //         if (!sb4FolderPath) {
 //             return;
 //         }

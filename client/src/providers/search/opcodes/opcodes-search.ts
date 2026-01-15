@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
-import { Singleton, StorageKey, StorageDataManager, GtaVersionManager } from '@shared';
+import { Singleton, StorageKey } from '@shared';
 import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
 import { CommandProcessor } from './command-processor';
 import { MessageCommand } from '@shared';
 import { FolderManager } from '../../../managers/folder-manager';
 import { GtaVersionButton } from '../../../components/gta-version-button.component';
+import { StorageDataManager } from '../../../storage/storage-data-manager';
+import { GtaVersionManager } from '../../../gta-version/gta-version-manager';
 
 export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
@@ -22,7 +24,7 @@ export class OpcodesSearch extends Singleton {
 
     private create(context: vscode.ExtensionContext) {
         const disposable = vscode.commands.registerCommand('sb4.searchOpcodes', async () => {
-            if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
+            if (!this.storageDataManager.has(StorageKey.Sb4FolderPath)) {
                 this.folderManager.showErrorMessageSelectFolder();
                 return;
             }

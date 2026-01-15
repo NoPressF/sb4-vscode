@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { GtaVersionManager } from '@shared';
-import { StorageDataManager, StorageKey } from '@shared';
-import { Singleton } from '@shared';
+import { Singleton, StorageKey } from '@shared';
 import { LanguageManager } from '../managers/language-manager';
 import { CONFIG } from '@shared';
 import { OpcodesSearch } from '../providers/search/opcodes/opcodes-search';
+import { StorageDataManager } from '../storage/storage-data-manager';
+import { GtaVersionManager } from '../gta-version/gta-version-manager';
 
 export class GtaVersionButton extends Singleton {
     private static readonly BUTTON_ID = 'sb4.gtaVersions';
@@ -20,7 +20,7 @@ export class GtaVersionButton extends Singleton {
     private languageManager: LanguageManager = LanguageManager.getInstance();
 
     public init(context: vscode.ExtensionContext) {
-        const selectedVersion = this.storageDataManager.getStorageData(StorageKey.GtaVersion) as string;
+        const selectedVersion = this.storageDataManager.get(StorageKey.GtaVersion) as string;
 
         this.context = context;
         this.button = this.createStatusBarItem();
@@ -72,13 +72,13 @@ export class GtaVersionButton extends Singleton {
             return;
         }
 
-        const gtaVersion = this.storageDataManager.getStorageData(StorageKey.GtaVersion) as string;
+        const gtaVersion = this.storageDataManager.get(StorageKey.GtaVersion) as string;
 
         if (selected.label === gtaVersion) {
             return;
         }
 
-        await this.storageDataManager.updateStorageData(StorageKey.GtaVersion, selected.label);
+        await this.storageDataManager.set(StorageKey.GtaVersion, selected.label);
         await this.languageManager.exportPatterns();
         this.updateButtonText(selected.label);
 

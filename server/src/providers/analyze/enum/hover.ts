@@ -1,56 +1,50 @@
-// import * as vscode from 'vscode';
-// import { Enum } from './enum';
-// import { Singleton } from '../../../../../client/src/singleton';
+import { Enum } from './enum';
+import { Singleton } from '@shared';
+import { getDottedWordRangeAtPosition } from '../../../../src/utils';
+import { Hover, MarkupContent } from 'vscode-languageserver';
 
-// export const LANGUAGE_SELECTOR = { language: 'sb', scheme: 'file' };
+export class EnumHoverProvider extends Singleton {
+	private enum: Enum = Enum.getInstance();
 
-// export class EnumHoverProvider extends Singleton implements vscode.HoverProvider {
-//     private context!: vscode.ExtensionContext;
-//     private enumInstance: Enum = Enum.getInstance();
+	public init() {
+		this.connect();
+	}
 
-//     public init(context: vscode.ExtensionContext) {
-//         this.context = context;
+	public connect() {
+		this.enum.connection.onHover((params): Hover | undefined => {
+			const doc = this.enum.documents.get(params.textDocument.uri);
+			if (!doc) {
+				return;
+			}
 
-//         this.registerProvider();
-//     } 
+			const wordRange = getDottedWordRangeAtPosition(doc, params.position);
+			if (!wordRange) {
+				return;
+			}
 
-//     public provideHover(document: vscode.TextDocument, position: vscode.Position) {
-//         const wordRange = document.getWordRangeAtPosition(position, /\b[\w\.]+\b/);
-//         if (!wordRange) {
-//             return;
-//         }
+			const word = doc.getText(wordRange);
+			const [enumName, elementName] = word.split('.');
 
-//         const word = document.getText(wordRange);
-//         const [enumName, elementName] = word.split('.');
+			if (!elementName || !enumName) {
+				return;
+			}
 
-//         if (!elementName || !enumName) {
-//             return;
-//         }
+			const enumInfo = this.enum.getEnumElement(enumName);
+			if (!enumInfo) {
+				return;
+			}
 
-//         const enumInfo = this.enumInstance.getEnumElement(enumName);
-//         if (!enumInfo) {
-//             return;
-//         }
+			const element = enumInfo.find(e => e.name === elementName);
+			if (!element) {
+				return;
+			}
 
-//         const element = enumInfo.elements.find(e => e.name === elementName);
-//         if (!element) {
-//             return;
-//         }
+			const markupContent: MarkupContent = {
+				kind: 'markdown',
+				value: `**${enumName}.${elementName}**\n\n**Type**: ${enumName}\n\n**Value**: ${element.value}`
+			};
 
-//         const contents = new vscode.MarkdownString();
-//         contents.appendMarkdown(`**${enumName}.${elementName}**\n\n`);
-//         contents.appendMarkdown(`**Type**: ${enumName}\n\n`);
-//         contents.appendMarkdown(`**Value**: ${element.value}`);
-
-//         return new vscode.Hover(contents);
-//     }
-
-//     private registerProvider() {
-//         this.context.subscriptions.push(
-//             vscode.languages.registerHoverProvider(
-//                 LANGUAGE_SELECTOR,
-//                 this
-//             )
-//         );
-//     }
-// }
+			return { contents: markupContent };
+		});
+	}
+}

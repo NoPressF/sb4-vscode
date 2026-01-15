@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
-import { GtaVersionManager, isFileExists } from '@shared';
-import { Singleton } from '@shared';
-import { StorageDataManager, StorageKey } from '@shared';
+import { Singleton, StorageKey, isFileExists } from '@shared';
 import { GtaVersionButton } from '../components/gta-version-button.component';
+import { StorageDataManager } from '../storage/storage-data-manager';
+import { GtaVersionManager } from '../gta-version/gta-version-manager';
 
 interface GrammarPattern {
     match: string;
@@ -22,6 +22,7 @@ interface FunctionNamesList {
 }
 
 export class LanguageManager extends Singleton {
+    // TODO: Refactor parse data
     private readonly SYNTAX_FOLDER = 'syntax';
     private readonly BASE_GRAMMAR = {
         scopeName: 'source.sb4.functions',
@@ -116,7 +117,7 @@ export class LanguageManager extends Singleton {
     }
 
     private async parseEnums(): Promise<string> {
-        const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        const folderPath = this.storageDataManager.get(StorageKey.Sb4FolderPath) as string;
 
         if (!folderPath) {
             return "";
@@ -124,7 +125,7 @@ export class LanguageManager extends Singleton {
 
         const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier()!, 'enums.txt');
 
-        if (!isFileExists(enumsPath)) {
+        if (!await isFileExists(enumsPath)) {
             return "";
         }
 

@@ -1,8 +1,8 @@
-import { isFileExists, Singleton } from '@shared';
+import { isFileExists, Singleton, StorageKey } from '@shared';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
 import { XMLParser } from 'fast-xml-parser';
-import { StorageDataManager, StorageKey } from './storage-data-manager';
+import { StorageDataManager } from '../storage/storage-data-manager';
 
 export interface GtaVersion {
     label: string;
@@ -25,7 +25,7 @@ export class GtaVersionManager extends Singleton {
         try {
             this.GTA_VERSIONS = [];
 
-            const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+            const folderPath = this.storageDataManager.get(StorageKey.Sb4FolderPath) as string;
 
             if (!folderPath) {
                 return [];
@@ -86,7 +86,7 @@ export class GtaVersionManager extends Singleton {
     }
 
     public getVersionData(): GtaVersion | undefined {
-        const gtaVersion = this.storageDataManager.getStorageData(StorageKey.GtaVersion) as string;
+        const gtaVersion = this.storageDataManager.get(StorageKey.GtaVersion) as string;
 
         return this.GTA_VERSIONS.find(v => v.label === gtaVersion);
     }

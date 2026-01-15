@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fsp } from 'fs';
-import { isFileExists } from '@shared';
 import * as iconv from 'iconv-lite';
 import { spawn } from 'child_process';
 import { CompilerTools } from './compiler-tools';
-import { Singleton } from '@shared';
-import { StorageDataManager, StorageKey } from '@shared';
-import { GtaVersionManager } from '@shared';
+import { Singleton, isFileExists, StorageKey } from '@shared';
 import { FolderManager } from '../managers/folder-manager';
+import { StorageDataManager } from '../storage/storage-data-manager';
+import { GtaVersionManager } from '../gta-version/gta-version-manager';
 
 export enum ExecuteType {
     COMPILE,
@@ -91,7 +90,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     }
 
     private async execute() {
-        if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
+        if (!this.storageDataManager.has(StorageKey.Sb4FolderPath)) {
             return;
         }
 
@@ -104,7 +103,7 @@ export abstract class CommandBase extends Singleton implements vscode.Disposable
     }
 
     private async executeOperation(filePath: string) {
-        const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
+        const folderPath = this.storageDataManager.get(StorageKey.Sb4FolderPath) as string;
 
         if (!folderPath) {
             this.folderManager.showErrorMessageSelectFolder();

@@ -116,11 +116,9 @@
     "cleo"
   ],
   "scripts": {
-    "compile:client": "webpack --config webpack.config.js --mode production",
-    "compile:server": "tsc -p tsconfig.json",
-    "build": "npm run compile:client && npm run compile:server",
-    "watch:client": "webpack --watch --config webpack.config.js --mode development",
-    "watch:server": "tsc -w -p tsconfig.json"
+    "compile:client": "webpack --config webpack.client.config.js --mode production",
+    "compile:server": "webpack --config webpack.server.config.js --mode production",
+    "build": "npm run compile:client && npm run compile:server"
   },
   "devDependencies": {
     "@types/node": "^20.19.28",

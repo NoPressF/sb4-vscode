@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
-import { GtaVersionManager, StorageDataManager } from '@shared';
 import { FolderManager } from './managers/folder-manager';
 import { LanguageManager } from './managers/language-manager';
 import { CompileCommand } from './compiler-tools/compile-command';
 import { DecompileCommand } from './compiler-tools/decompile-command';
 import { registerSearchProviders } from './providers/search/search';
 import { GtaVersionButton } from './components/gta-version-button.component';
+import { StorageDataManager } from './storage/storage-data-manager';
+import { GtaVersionManager } from './gta-version/gta-version-manager';
 import { clientActivate, clientDeactivate } from './client';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -27,7 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     registerSearchProviders(context);
 
-    clientActivate(context);
+    await clientActivate(context);
 }
 
 export function deactivate() {

@@ -12,12 +12,18 @@ import {
 	InitializeResult,
 	DocumentDiagnosticReportKind,
 	type DocumentDiagnosticReport,
-	CompletionItemKind
+	CompletionItemKind,
+	HoverParams,
+	Hover
 } from 'vscode-languageserver/node';
 
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
+
+import { Enum } from './providers/analyze/enum/enum';
+import { StorageDataBridge } from './bridges/storage-data-bridge';
+import { GtaVersionBridge } from './bridges/gta-version-bridge';
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -25,6 +31,9 @@ const documentSettings = new Map<string, Thenable<void>>();
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
+
+const storageDataBridge: StorageDataBridge = StorageDataBridge.getInstance();
+const gtaVersionBridge: GtaVersionBridge = GtaVersionBridge.getInstance();
 
 connection.onInitialize((params: InitializeParams) => {
 	const capabilities = params.capabilities;
@@ -40,8 +49,10 @@ connection.onInitialize((params: InitializeParams) => {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Incremental,
 			completionProvider: {
-				resolveProvider: true
+				resolveProvider: true,
+				triggerCharacters: ['.']
 			},
+			hoverProvider: true,
 			diagnosticProvider: {
 				interFileDependencies: false,
 				workspaceDiagnostics: false
@@ -59,7 +70,7 @@ connection.onInitialize((params: InitializeParams) => {
 	return result;
 });
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
 	if (hasConfigurationCapability) {
 		connection.client.register(DidChangeConfigurationNotification.type, undefined);
 	}
@@ -67,7 +78,10 @@ connection.onInitialized(() => {
 		connection.workspace.onDidChangeWorkspaceFolders(_event => { });
 	}
 
-	//initEnum(); // FIXME: Doesn't work
+	storageDataBridge.init(connection);
+	gtaVersionBridge.init(connection);
+
+	await Enum.getInstance().init(connection, documents);
 });
 
 connection.onDidChangeConfiguration(_ => {
@@ -87,7 +101,7 @@ connection.languages.diagnostics.on(async (params) => {
 	if (document !== undefined) {
 		return {
 			kind: DocumentDiagnosticReportKind.Full,
-			items: await validateTextDocument(document)
+			items: []
 		} satisfies DocumentDiagnosticReport;
 	} else {
 		return {
@@ -98,77 +112,35 @@ connection.languages.diagnostics.on(async (params) => {
 });
 
 documents.onDidChangeContent(change => {
-	validateTextDocument(change.document);
+	//validateTextDocument(change.document);
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
-	const text = textDocument.getText();
-	const pattern = /'\w{8,}'/g;
-	let m: RegExpExecArray | null;
+// async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
+// 	const text = textDocument.getText();
+// 	const pattern = /'\w{8,}'/g;
+// 	let m: RegExpExecArray | null;
 
-	const diagnostics: Diagnostic[] = [];
-	while ((m = pattern.exec(text))) {
-		const diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Error,
-			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
-			},
-			message: `${m[0]} has more than 7 characters in single quotes.`
-		};
+// 	const diagnostics: Diagnostic[] = [];
+// 	while ((m = pattern.exec(text))) {
+// 		const diagnostic: Diagnostic = {
+// 			severity: DiagnosticSeverity.Error,
+// 			range: {
+// 				start: textDocument.positionAt(m.index),
+// 				end: textDocument.positionAt(m.index + m[0].length)
+// 			},
+// 			message: `${m[0]} has more than 7 characters in single quotes.`
+// 		};
 
-		diagnostics.push(diagnostic);
-	}
-	return diagnostics;
-}
+// 		diagnostics.push(diagnostic);
+// 	}
+// 	return diagnostics;
+// }
 
-connection.onCompletion(
-	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-		// The pass parameter contains the position of the text document in
-		// which code complete got requested. For the example we ignore this
-		// info and always provide the same completion items.
-		return [
-			{
-				label: 'TypeScript',
-				kind: CompletionItemKind.Text,
-				data: 1
-			},
-			{
-				label: 'JavaScript',
-				kind: CompletionItemKind.Text,
-				data: 2
-			}
-		];
-	}
-);
-
-// This handler resolves additional information for the item selected in
-// the completion list.
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
-		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
-		} else if (item.data === 2) {
-			item.detail = 'JavaScript details';
-			item.documentation = 'JavaScript documentation';
-		}
 		return item;
 	}
 );
-
-// connection.onCompletion(
-// 	(params: TextDocumentPositionParams): CompletionItem[] => {
-// 		const document = documents.get(params.textDocument.uri);
-// 		if (!document) return [];
-
-// 		return [{label: 'TypeScript', kind: CompletionItemKind.Text, data: 1}];
-
-// 		// return [
-// 		// 	...enumCompletionProvider.getCompletionItems(document, params.position)
-// 		// ];
-// 	}
-// );
 
 documents.listen(connection);
 connection.listen();

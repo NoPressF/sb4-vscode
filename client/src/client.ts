@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { workspace, ExtensionContext } from 'vscode';
+import { CONFIG, StorageGetMethod, StorageGetParams, StorageKey, StorageSetMethod, StorageSetParams } from '@shared';
 
 import {
 	LanguageClient,
@@ -7,17 +8,22 @@ import {
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient/node';
-import { CONFIG } from '@shared';
+import { StorageDataBridgeEvents } from './storage/storage-data-bridge-events';
+import { GtaVersionBridgeEvents } from './gta-version/gta-version-bridge-events';
 
 let client: LanguageClient;
 
-export function clientActivate(context: ExtensionContext) {
-	const serverModule = context.asAbsolutePath(path.join('dist', 'server', 'src', 'server.js'));
+export async function clientActivate(context: ExtensionContext) {
+	const serverModule = context.asAbsolutePath(path.join('dist', 'server', 'server.js'));
 	const serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.ipc },
+		run: {
+			module: serverModule,
+			transport: TransportKind.ipc
+		},
 		debug: {
 			module: serverModule,
 			transport: TransportKind.ipc,
+			options: { execArgv: ["--nolazy", "--inspect=6009"] }
 		}
 	};
 
@@ -35,7 +41,10 @@ export function clientActivate(context: ExtensionContext) {
 		clientOptions
 	);
 
-	client.start();
+	new StorageDataBridgeEvents(client);
+	new GtaVersionBridgeEvents(client);
+
+	await client.start();
 }
 
 export function clientDeactivate(): Thenable<void> | undefined {

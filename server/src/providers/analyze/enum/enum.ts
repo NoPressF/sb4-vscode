@@ -1,78 +1,89 @@
-// import * as path from 'path';
-// import * as fs from 'fs';
-// import { GtaVersionManager } from '@shared';
-// import { Singleton } from '@shared';
-// import { StorageDataManager, StorageKey } from '@shared';
+import * as path from 'path';
+import { promises as fsp } from 'fs';
+import { isFileExists, Singleton, StorageKey } from '@shared';
+import { StorageDataBridge } from '../../../bridges/storage-data-bridge';
+import { GtaVersionBridge } from '../../../bridges/gta-version-bridge';
+import { Connection, TextDocuments } from 'vscode-languageserver';
+import { EnumCompletionProvider } from './completion';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { EnumHoverProvider } from './hover';
 
-// export type EnumInfo = {
-//     name: string;
-//     elements: { name: string; value: string | number }[];
-// };
+export class Enum extends Singleton {
+	private gtaVersionBridge: GtaVersionBridge = GtaVersionBridge.getInstance();
+	private storageDataBridge: StorageDataBridge = StorageDataBridge.getInstance();
+	private enums = new Map<string, { name: string; value: string | number }[]>();
+	public connection!: Connection;
+	public documents!: TextDocuments<TextDocument>;
 
-// export class Enum extends Singleton {
+	public async init(connection: Connection, documents: TextDocuments<TextDocument>) {
+		this.connection = connection;
+		this.documents = documents;
 
-//     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
+		await this.loadEnums();
 
-//     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
+		EnumCompletionProvider.getInstance().init();
+		EnumHoverProvider.getInstance().init();
+	}
 
-//     private enums = new Map<string, EnumInfo>();
+	public getEnumElement(enumElement: string) {
+		return this.enums.get(enumElement);
+	}
 
-//     public init() {
-//         this.loadEnums();
-//     }
+	public getEnums() {
+		return this.enums;
+	}
 
-//     public getEnumElement(enumElement: string): EnumInfo {
-//         return this.enums.get(enumElement) as EnumInfo;
-//     }
+	public async loadEnums() {
+		const folderPath = await this.storageDataBridge.get(StorageKey.Sb4FolderPath) as string;
+		if (!folderPath) {
+			return;
+		}
 
-//     public loadEnums() {
-//         const folderPath = this.storageDataManager.getStorageData(StorageKey.Sb4FolderPath) as string;
-//         if (!folderPath) {
-//             return;
-//         }
+		const indentifier = await this.gtaVersionBridge.getIdentifier();
 
-//         const enumsPath = path.join(folderPath, 'data', this.gtaVersionManager.getIdentifier(), 'enums.txt');
-//         const content = fs.readFileSync(enumsPath, 'utf-8');
+		if (!indentifier) {
+			return;
+		}
 
-//         if (!fs.existsSync(enumsPath)) {
-//             return;
-//         }
+		const enumsPath = path.join(folderPath, 'data', indentifier, 'enums.txt');
 
-//         this.parseEnums(content);
-//     }
+		if (!await isFileExists(enumsPath)) {
+			return;
 
-//     private parseEnums(content: string) {
-//         const enumBlocks = [...content.matchAll(/enum\s+(\w+)(.*?)end/gs)];
-//         for (const block of enumBlocks) {
-//             const enumName = block[1];
-//             const lines = block[2].trim().split('\n').map(l => l.trim()).filter(Boolean);
-//             let currentValue = 0;
-//             const elements: { name: string; value: string | number }[] = [];
+		}
+		const content = await fsp.readFile(enumsPath, 'utf-8');
 
-//             for (const line of lines) {
-//                 const [namePart, valuePart] = line.split('=').map(p => p.trim());
-//                 let value: string | number = currentValue;
+		this.parseEnums(content);
+	}
 
-//                 if (valuePart) {
-//                     if (/^["']/.test(valuePart)) {
-//                         value = valuePart.slice(1, -1);
-//                     } else {
-//                         value = Number(valuePart) || valuePart;
-//                     }
-//                     currentValue = typeof value === 'number' ? value + 1 : 0;
-//                 } else {
-//                     value = currentValue++;
-//                 }
+	private parseEnums(content: string) {
+		const enumBlocks = [...content.matchAll(/enum\s+(\w+)(.*?)end/gs)];
+		for (const block of enumBlocks) {
+			const enumName = block[1];
+			const lines = block[2].trim().split('\n').map(l => l.trim()).filter(Boolean);
+			let currentValue = 0;
+			const elements: { name: string; value: string | number }[] = [];
 
-//                 elements.push({ name: namePart, value });
-//             }
+			for (const line of lines) {
+				const [namePart, valuePart] = line.split('=').map(p => p.trim());
+				let value: string | number = currentValue;
 
-//             this.enums.set(enumName, { name: enumName, elements });
-//         }
-//     }
-// }
+				if (valuePart) {
+					if (/^["']/.test(valuePart)) {
+						value = valuePart.slice(1, -1);
+					} else {
+						value = Number(valuePart) || valuePart;
+					}
 
-// export const initEnum = () => {
-//     console.log("try init");
-//     Enum.getInstance().init();
-// };
+					currentValue = typeof value === 'number' ? value + 1 : 0;
+				} else {
+					value = currentValue++;
+				}
+
+				elements.push({ name: namePart, value });
+			}
+
+			this.enums.set(enumName, elements);
+		}
+	}
+}

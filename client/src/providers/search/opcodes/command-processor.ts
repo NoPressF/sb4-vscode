@@ -1,9 +1,9 @@
 import { Singleton } from '@shared';
 import { CommandArgs, CommandInfo, CommandIO, SearchType } from '@shared';
 import { SEARCH_TYPE, VAR_NOTATIONS } from '@shared';
-import { GtaVersionManager } from '@shared';
 import { WebViewManager } from '../../../managers/webview-manager';
 import { HtmlFormatColorManager } from '../../../managers/html-format-color-manager';
+import { GtaVersionManager } from '../../../gta-version/gta-version-manager';
 
 export class CommandProcessor extends Singleton {
     private searchType: SearchType = SearchType.OPCODES;

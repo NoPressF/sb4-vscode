@@ -12,6 +12,7 @@
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"
 			],
+			"autoAttachChildProcesses": true,
 			"preLaunchTask": "build"
 		}
 	]

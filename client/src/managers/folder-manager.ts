@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { isFileExists, Singleton } from '@shared';
 import { LanguageManager } from './language-manager';
-import { StorageDataManager, StorageKey } from '@shared';
-import { CONFIG } from '@shared';
+import { Singleton, isFileExists, CONFIG, StorageKey } from '@shared';
+import { StorageDataManager } from '../storage/storage-data-manager';
 
 export class FolderManager extends Singleton {
     private context!: vscode.ExtensionContext;
@@ -14,7 +13,7 @@ export class FolderManager extends Singleton {
         this.context = context;
         this.registerFolderCommand();
 
-        if (!this.storageDataManager.hasStorageData(StorageKey.Sb4FolderPath)) {
+        if (!this.storageDataManager.has(StorageKey.Sb4FolderPath)) {
             this.showErrorMessageSelectFolder();
         }
     }
@@ -56,7 +55,7 @@ export class FolderManager extends Singleton {
             return;
         }
 
-        await this.storageDataManager.updateStorageData(StorageKey.Sb4FolderPath, folderPath);
+        await this.storageDataManager.set(StorageKey.Sb4FolderPath, folderPath);
         await this.languageManager.exportPatterns();
         await vscode.window.showInformationMessage('The path to the SB4 folder was selected.');
     }

@@ -11,6 +11,7 @@
 				"shared/src/index.ts"
 			]
 		},
+		"sourceMap": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true
 	},

@@ -6,6 +6,10 @@ export enum SearchType {
 export enum MessageCommand {
     UPDATE_SEARCH_TYPE
 };
+export enum StorageKey {
+    GtaVersion = 'gtaVersion',
+    Sb4FolderPath = 'sb4FolderPath',
+};
 
 export interface CommandArgs {
     name?: string;
