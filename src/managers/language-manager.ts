@@ -1,4 +1,4 @@
-import { CONFIG, DETECT_LANG_FILE_PATTERN, DETECT_LANG_MAIN_FILE_PATTERN, Singleton, readJsonFile } from '@utils';
+import { CONFIG, DETECT_LANG_FILE_PATTERNS, Singleton, readJsonFile } from '@utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { TextDocument } from 'vscode';
@@ -11,6 +11,7 @@ export class LanguageManager extends Singleton {
         this.context = context;
 
         this.applyColors();
+        this.detectFileLanguage();
     }
 
     private async applyColors() {
@@ -26,7 +27,7 @@ export class LanguageManager extends Singleton {
         }
     }
 
-    public detectFileLanguage() {
+    private detectFileLanguage() {
         const detect = function (doc: TextDocument) {
             if (doc.languageId !== 'plaintext' && doc.languageId !== 'unknown') {
                 return;
@@ -34,20 +35,20 @@ export class LanguageManager extends Singleton {
 
             const text = doc.getText();
 
-            const regexList: RegExp[] = [DETECT_LANG_FILE_PATTERN, DETECT_LANG_MAIN_FILE_PATTERN];
-
-            for (const regex of regexList) {
+            for (const regex of DETECT_LANG_FILE_PATTERNS) {
                 if (!regex.test(text)) {
-                    return;
+                    continue;
                 }
 
                 vscode.languages.setTextDocumentLanguage(doc, CONFIG.LANGUAGE_SELECTOR.language);
+                break;
             };
 
-            vscode.workspace.onDidOpenTextDocument(doc => detect(doc));
-            vscode.workspace.onDidChangeTextDocument(e => detect(e.document));
-
-            vscode.workspace.textDocuments.forEach(doc => detect(doc));
         };
+
+        vscode.workspace.onDidOpenTextDocument(doc => detect(doc));
+        vscode.workspace.onDidChangeTextDocument(e => detect(e.document));
+
+        vscode.workspace.textDocuments.forEach(doc => detect(doc));
     }
 }

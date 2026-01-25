@@ -19,5 +19,7 @@ export const CONFIG = Object.freeze({
 
 export const INCLUDE_PATTERN = /\{\$INCLUDE\s+([^\}]+)\}/g;
 
-export const DETECT_LANG_FILE_PATTERN = /\bscript_name\s+'(\w+)'/;
-export const DETECT_LANG_MAIN_FILE_PATTERN = /\bDEFINE OBJECT SANNY BUILDER/;
+export const DETECT_LANG_FILE_PATTERNS = [
+    /\bscript_name\s+'\w+'/,
+    /\bDEFINE OBJECT SANNY BUILDER/
+];

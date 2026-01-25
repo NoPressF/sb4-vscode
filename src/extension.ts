@@ -16,8 +16,6 @@ export async function activate(context: vscode.ExtensionContext) {
     CompileCommand.getInstance().init(context);
     DecompileCommand.getInstance().init(context);
 
-    LanguageManager.getInstance().detectFileLanguage();
-
     BaseProvider.getInstance().init(context);
 
     JumpIncludeProvider.getInstance().register();
