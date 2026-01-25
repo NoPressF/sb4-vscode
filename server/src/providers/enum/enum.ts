@@ -1,39 +1,30 @@
-import * as path from 'path';
-import { promises as fsp } from 'fs';
 import { isFileExists, Singleton, StorageKey } from '@shared';
-import { StorageDataBridge } from '../../../bridges/storage-data-bridge';
-import { GtaVersionBridge } from '../../../bridges/gta-version-bridge';
-import { Connection, TextDocuments } from 'vscode-languageserver';
-import { EnumCompletionProvider } from './completion';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { promises as fsp } from 'fs';
+import * as path from 'path';
+import { GtaVersionBridge } from '../../bridges/gta-version-bridge';
+import { StorageDataBridge } from '../../bridges/storage-data-bridge';
 import { EnumHoverProvider } from './hover';
 
-export class Enum extends Singleton {
+export class EnumProvider extends Singleton {
 	private gtaVersionBridge: GtaVersionBridge = GtaVersionBridge.getInstance();
 	private storageDataBridge: StorageDataBridge = StorageDataBridge.getInstance();
 	private enums = new Map<string, { name: string; value: string | number }[]>();
-	public connection!: Connection;
-	public documents!: TextDocuments<TextDocument>;
 
-	public async init(connection: Connection, documents: TextDocuments<TextDocument>) {
-		this.connection = connection;
-		this.documents = documents;
+	public async init() {
+		await this.load();
 
-		await this.loadEnums();
-
-		EnumCompletionProvider.getInstance().init();
 		EnumHoverProvider.getInstance().init();
 	}
 
-	public getEnumElement(enumElement: string) {
-		return this.enums.get(enumElement);
+	public getElement(element: string) {
+		return this.enums.get(element);
 	}
 
-	public getEnums() {
+	public get() {
 		return this.enums;
 	}
 
-	public async loadEnums() {
+	private async load() {
 		const folderPath = await this.storageDataBridge.get(StorageKey.Sb4FolderPath) as string;
 		if (!folderPath) {
 			return;
@@ -53,10 +44,10 @@ export class Enum extends Singleton {
 		}
 		const content = await fsp.readFile(enumsPath, 'utf-8');
 
-		this.parseEnums(content);
+		this.parse(content);
 	}
 
-	private parseEnums(content: string) {
+	private parse(content: string) {
 		const enumBlocks = [...content.matchAll(/enum\s+(\w+)(.*?)end/gs)];
 		for (const block of enumBlocks) {
 			const enumName = block[1];

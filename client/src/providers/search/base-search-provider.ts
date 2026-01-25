@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import { Singleton } from '@shared';
+import * as vscode from 'vscode';
 
 export abstract class BaseSearchProvider extends Singleton {
     protected context!: vscode.ExtensionContext;

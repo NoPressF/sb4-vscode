@@ -1,10 +1,8 @@
+import { CONFIG, Singleton, StorageKey } from '@shared';
 import * as vscode from 'vscode';
-import { Singleton, StorageKey } from '@shared';
-import { LanguageManager } from '../managers/language-manager';
-import { CONFIG } from '@shared';
-import { OpcodesSearch } from '../providers/search/opcodes/opcodes-search';
-import { StorageDataManager } from '../storage/storage-data-manager';
-import { GtaVersionManager } from '../gta-version/gta-version-manager';
+import { GtaVersionManager } from '../managers/gta-version-manager';
+import { StorageDataManager } from '../managers/storage-data-manager';
+import { OpcodesSearch } from '../providers/search/opcodes-search';
 
 export class GtaVersionButton extends Singleton {
     private static readonly BUTTON_ID = 'sb4.gtaVersions';
@@ -17,7 +15,6 @@ export class GtaVersionButton extends Singleton {
     private button!: vscode.StatusBarItem;
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
-    private languageManager: LanguageManager = LanguageManager.getInstance();
 
     public init(context: vscode.ExtensionContext) {
         const selectedVersion = this.storageDataManager.get(StorageKey.GtaVersion) as string;
@@ -79,7 +76,7 @@ export class GtaVersionButton extends Singleton {
         }
 
         await this.storageDataManager.set(StorageKey.GtaVersion, selected.label);
-        await this.languageManager.exportPatterns();
+        //await this.languageManager.updatePatterns();
         this.updateButtonText(selected.label);
 
         await OpcodesSearch.getInstance().updateWebviewContent(true);

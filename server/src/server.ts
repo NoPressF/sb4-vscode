@@ -1,29 +1,24 @@
 import {
 	createConnection,
-	TextDocuments,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
 	DidChangeConfigurationNotification,
-	CompletionItem,
-	TextDocumentPositionParams,
-	TextDocumentSyncKind,
-	InitializeResult,
 	DocumentDiagnosticReportKind,
-	type DocumentDiagnosticReport,
-	CompletionItemKind,
-	HoverParams,
-	Hover
+	InitializeParams,
+	InitializeResult,
+	ProposedFeatures,
+	TextDocuments,
+	TextDocumentSyncKind,
+	type DocumentDiagnosticReport
 } from 'vscode-languageserver/node';
 
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
-import { Enum } from './providers/analyze/enum/enum';
-import { StorageDataBridge } from './bridges/storage-data-bridge';
-import { GtaVersionBridge } from './bridges/gta-version-bridge';
+import { BaseProvider } from './providers/base';
+import { ClassProvider } from './providers/class/class';
+import { EnumProvider } from './providers/enum/enum';
+import { JumpIncludeProvider } from './providers/jump-include/jump-include';
+import { OpcodeProvider } from './providers/opcode/opcode';
 
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
@@ -31,9 +26,6 @@ const documentSettings = new Map<string, Thenable<void>>();
 
 let hasConfigurationCapability = false;
 let hasWorkspaceFolderCapability = false;
-
-const storageDataBridge: StorageDataBridge = StorageDataBridge.getInstance();
-const gtaVersionBridge: GtaVersionBridge = GtaVersionBridge.getInstance();
 
 connection.onInitialize((params: InitializeParams) => {
 	const capabilities = params.capabilities;
@@ -49,16 +41,20 @@ connection.onInitialize((params: InitializeParams) => {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Incremental,
 			completionProvider: {
-				resolveProvider: true,
+				resolveProvider: false,
 				triggerCharacters: ['.']
 			},
 			hoverProvider: true,
+			documentLinkProvider: {
+				resolveProvider: false
+			},
 			diagnosticProvider: {
 				interFileDependencies: false,
 				workspaceDiagnostics: false
 			}
 		}
 	};
+
 	if (hasWorkspaceFolderCapability) {
 		result.capabilities.workspace = {
 			workspaceFolders: {
@@ -66,6 +62,9 @@ connection.onInitialize((params: InitializeParams) => {
 			}
 		};
 	}
+
+	BaseProvider.getInstance().setup(connection, documents);
+	JumpIncludeProvider.getInstance().init();
 
 	return result;
 });
@@ -78,10 +77,11 @@ connection.onInitialized(async () => {
 		connection.workspace.onDidChangeWorkspaceFolders(_event => { });
 	}
 
-	storageDataBridge.init(connection);
-	gtaVersionBridge.init(connection);
+	await EnumProvider.getInstance().init();
+	await ClassProvider.getInstance().init();
+	await OpcodeProvider.getInstance().init();
 
-	await Enum.getInstance().init(connection, documents);
+	BaseProvider.getInstance().provideCompletions();
 });
 
 connection.onDidChangeConfiguration(_ => {
@@ -111,36 +111,9 @@ connection.languages.diagnostics.on(async (params) => {
 	}
 });
 
-documents.onDidChangeContent(change => {
-	//validateTextDocument(change.document);
+documents.onDidChangeContent(_change => {
+
 });
-
-// async function validateTextDocument(textDocument: TextDocument): Promise<Diagnostic[]> {
-// 	const text = textDocument.getText();
-// 	const pattern = /'\w{8,}'/g;
-// 	let m: RegExpExecArray | null;
-
-// 	const diagnostics: Diagnostic[] = [];
-// 	while ((m = pattern.exec(text))) {
-// 		const diagnostic: Diagnostic = {
-// 			severity: DiagnosticSeverity.Error,
-// 			range: {
-// 				start: textDocument.positionAt(m.index),
-// 				end: textDocument.positionAt(m.index + m[0].length)
-// 			},
-// 			message: `${m[0]} has more than 7 characters in single quotes.`
-// 		};
-
-// 		diagnostics.push(diagnostic);
-// 	}
-// 	return diagnostics;
-// }
-
-connection.onCompletionResolve(
-	(item: CompletionItem): CompletionItem => {
-		return item;
-	}
-);
 
 documents.listen(connection);
 connection.listen();

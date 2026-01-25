@@ -1,32 +1,29 @@
 import * as vscode from 'vscode';
-import { FolderManager } from './managers/folder-manager';
-import { LanguageManager } from './managers/language-manager';
+import { clientActivate, clientDeactivate } from './client';
 import { CompileCommand } from './compiler-tools/compile-command';
 import { DecompileCommand } from './compiler-tools/decompile-command';
-import { registerSearchProviders } from './providers/search/search';
 import { GtaVersionButton } from './components/gta-version-button.component';
-import { StorageDataManager } from './storage/storage-data-manager';
-import { GtaVersionManager } from './gta-version/gta-version-manager';
-import { clientActivate, clientDeactivate } from './client';
+import { CommandManager } from './managers/command-manager';
+import { FolderManager } from './managers/folder-manager';
+import { GtaVersionManager } from './managers/gta-version-manager';
+import { LanguageManager } from './managers/language-manager';
+import { StorageDataManager } from './managers/storage-data-manager';
+import { CommandFormatterProvider } from './providers/command/command-formatter-provider';
+import { registerSearchProviders } from './providers/search/search';
 
 export async function activate(context: vscode.ExtensionContext) {
-    const storageDataManager = StorageDataManager.getInstance();
-    const gtaVersionManager = GtaVersionManager.getInstance();
-    const folderManager = FolderManager.getInstance();
-    const languageManager = LanguageManager.getInstance();
-    const gtaVersionButton = GtaVersionButton.getInstance();
-    const compileCommand = CompileCommand.getInstance();
-    const decompileCommand = DecompileCommand.getInstance();
-
-    storageDataManager.init(context);
-    await gtaVersionManager.init();
-    folderManager.init(context);
-    gtaVersionButton.init(context);
-    languageManager.init(context);
-    compileCommand.init(context);
-    decompileCommand.init(context);
+    StorageDataManager.getInstance().init(context);
+    await GtaVersionManager.getInstance().init();
+    await CommandManager.getInstance().init();
+    CommandFormatterProvider.getInstance().init();
+    FolderManager.getInstance().init(context);
+    GtaVersionButton.getInstance().init(context);
+    LanguageManager.getInstance().init(context);
+    CompileCommand.getInstance().init(context);
+    DecompileCommand.getInstance().init(context);
 
     registerSearchProviders(context);
+    LanguageManager.getInstance().detectFileLanguage();
 
     await clientActivate(context);
 }

@@ -1,5 +1,5 @@
 import { Range } from 'vscode-languageserver';
-import { TextDocument, Position } from 'vscode-languageserver-textdocument';
+import { Position, TextDocument } from 'vscode-languageserver-textdocument';
 
 export function getDottedWordRangeAtPosition(doc: TextDocument, position: Position): Range | null {
 	const text = doc.getText();

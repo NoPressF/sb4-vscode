@@ -1,5 +1,4 @@
 export abstract class Singleton {
-
     private static instances = new WeakMap<Function, any>();
 
     public static getInstance<T>(this: new () => T): T {
@@ -10,5 +9,4 @@ export abstract class Singleton {
         }
         return inst as T;
     }
-
 }

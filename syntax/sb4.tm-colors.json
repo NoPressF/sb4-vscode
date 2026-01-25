@@ -43,7 +43,7 @@
             }
         },
         {
-            "scope": "comment.line.sb, comment.block.sb", 
+            "scope": "comment.line.sb, comment.block.sb",
             "settings": {
                 "foreground": "#6A9955"
             }

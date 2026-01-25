@@ -1,6 +1,6 @@
+import { CONFIG } from '@shared';
 import * as path from 'path';
-import { workspace, ExtensionContext } from 'vscode';
-import { CONFIG, StorageGetMethod, StorageGetParams, StorageKey, StorageSetMethod, StorageSetParams } from '@shared';
+import { ExtensionContext, workspace } from 'vscode';
 
 import {
 	LanguageClient,
@@ -8,8 +8,9 @@ import {
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient/node';
-import { StorageDataBridgeEvents } from './storage/storage-data-bridge-events';
-import { GtaVersionBridgeEvents } from './gta-version/gta-version-bridge-events';
+import { CommandBridgeEvents } from './events/command-bridge-events';
+import { GtaVersionBridgeEvents } from './events/gta-version-bridge-events';
+import { StorageDataBridgeEvents } from './events/storage-data-bridge-events';
 
 let client: LanguageClient;
 
@@ -43,6 +44,7 @@ export async function clientActivate(context: ExtensionContext) {
 
 	new StorageDataBridgeEvents(client);
 	new GtaVersionBridgeEvents(client);
+	new CommandBridgeEvents(client);
 
 	await client.start();
 }

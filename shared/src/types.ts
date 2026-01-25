@@ -1,11 +1,12 @@
-export enum SearchType {
-    OPCODES,
-    CLASSES
+export enum CommandType {
+    OPCODE = "OPCODE",
+    CLASS_MEMBER = "CLASS_MEMBER",
 };
 
 export enum MessageCommand {
     UPDATE_SEARCH_TYPE
 };
+
 export enum StorageKey {
     GtaVersion = 'gtaVersion',
     Sb4FolderPath = 'sb4FolderPath',
@@ -22,10 +23,13 @@ export interface CommandIO {
     output?: string;
 };
 
-export interface CommandInfo {
-    id?: string;
-    name?: string;
+export interface Command {
+    name: string;
     class?: string;
     member?: string;
-    isUnsupported?: boolean;
+    format?: Partial<Record<CommandType, string>>;
+    input?: CommandArgs[];
+    output?: CommandArgs[];
+    shortDesc: string;
+    attrs?: { isUnsupported?: boolean };
 };

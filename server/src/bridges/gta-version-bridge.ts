@@ -1,15 +1,11 @@
 import { GtaVersionGetIdentifierMethod, GtaVersionGetIdentifierResult, Singleton } from '@shared';
-import { Connection } from 'vscode-languageserver';
+import { BaseProvider } from '../providers/base';
 
 export class GtaVersionBridge extends Singleton {
-	private connection!: Connection;
+	private baseProvider: BaseProvider = BaseProvider.getInstance();
 
-	public init(connection: Connection) {
-		this.connection = connection;
-	}
-
-	async getIdentifier(): Promise<string | undefined> {
-		return await this.connection.sendRequest<GtaVersionGetIdentifierResult>(
+	public async getIdentifier(): Promise<string | undefined> {
+		return await this.baseProvider.connection.sendRequest<GtaVersionGetIdentifierResult>(
 			GtaVersionGetIdentifierMethod
 		);
 	}

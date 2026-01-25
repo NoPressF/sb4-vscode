@@ -1,18 +1,20 @@
-import { Enum } from './enum';
 import { Singleton } from '@shared';
-import { getDottedWordRangeAtPosition } from '../../../../src/utils';
 import { Hover, MarkupContent } from 'vscode-languageserver';
+import { getDottedWordRangeAtPosition } from '../../../src/utils';
+import { BaseProvider } from '../base';
+import { EnumProvider } from './enum';
 
 export class EnumHoverProvider extends Singleton {
-	private enum: Enum = Enum.getInstance();
+	private enum: EnumProvider = EnumProvider.getInstance();
+	private baseProvider: BaseProvider = BaseProvider.getInstance();
 
 	public init() {
 		this.connect();
 	}
 
-	public connect() {
-		this.enum.connection.onHover((params): Hover | undefined => {
-			const doc = this.enum.documents.get(params.textDocument.uri);
+	private connect() {
+		this.baseProvider.connection.onHover((params): Hover | undefined => {
+			const doc = this.baseProvider.documents.get(params.textDocument.uri);
 			if (!doc) {
 				return;
 			}
@@ -29,7 +31,7 @@ export class EnumHoverProvider extends Singleton {
 				return;
 			}
 
-			const enumInfo = this.enum.getEnumElement(enumName);
+			const enumInfo = this.enum.getElement(enumName);
 			if (!enumInfo) {
 				return;
 			}
@@ -41,7 +43,7 @@ export class EnumHoverProvider extends Singleton {
 
 			const markupContent: MarkupContent = {
 				kind: 'markdown',
-				value: `**${enumName}.${elementName}**\n\n**Type**: ${enumName}\n\n**Value**: ${element.value}`
+				value: `${enumName}.${elementName}\nValue: ${element.value}`
 			};
 
 			return { contents: markupContent };

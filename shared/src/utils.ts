@@ -8,3 +8,7 @@ export async function isFileExists(path: string): Promise<boolean> {
         return false;
     }
 }
+
+export async function readJsonFile(filePath: string): Promise<any> {
+    return JSON.parse(await fsp.readFile(filePath, 'utf-8'));
+};

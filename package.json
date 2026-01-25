@@ -2,7 +2,7 @@
   "name": "sb4",
   "displayName": "Sanny Builder 4",
   "description": "Extension that replaces the editor Sanny builder 4",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "EOS",
   "author": "EOS",
   "license": "MIT",
@@ -90,12 +90,6 @@
     "grammars": [
       {
         "language": "sb",
-        "scopeName": "source.sb4.functions",
-        "path": "./syntax/sb4.tm-language-functions.json",
-        "extensions": []
-      },
-      {
-        "language": "sb",
         "scopeName": "source.sb4",
         "path": "./syntax/sb4.tm-language.json",
         "extensions": []
@@ -136,6 +130,7 @@
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.11",
     "vscode-languageclient": "^9.0.1",
-    "fast-xml-parser": "^5.3.3"
+    "fast-xml-parser": "^5.3.3",
+    "vscode-uri": "^3.1.0"
   }
 }

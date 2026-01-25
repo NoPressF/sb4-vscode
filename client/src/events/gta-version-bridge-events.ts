@@ -1,6 +1,6 @@
-import { LanguageClient } from 'vscode-languageclient/node';
-import { GtaVersionManager } from './gta-version-manager';
 import { GtaVersionGetIdentifierMethod } from '@shared';
+import { LanguageClient } from 'vscode-languageclient/node';
+import { GtaVersionManager } from '../managers/gta-version-manager';
 
 export class GtaVersionBridgeEvents {
 	private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();

@@ -1,13 +1,13 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
+import { isFileExists, Singleton, StorageKey } from '@shared';
+import { spawn } from 'child_process';
 import { promises as fsp } from 'fs';
 import * as iconv from 'iconv-lite';
-import { spawn } from 'child_process';
-import { CompilerTools } from './compiler-tools';
-import { Singleton, isFileExists, StorageKey } from '@shared';
+import * as path from 'path';
+import * as vscode from 'vscode';
 import { FolderManager } from '../managers/folder-manager';
-import { StorageDataManager } from '../storage/storage-data-manager';
-import { GtaVersionManager } from '../gta-version/gta-version-manager';
+import { GtaVersionManager } from '../managers/gta-version-manager';
+import { StorageDataManager } from '../managers/storage-data-manager';
+import { CompilerTools } from './compiler-tools';
 
 export enum ExecuteType {
     COMPILE,

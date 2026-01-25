@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import { Singleton, StorageKey } from '@shared';
+import * as vscode from 'vscode';
 
 export class StorageDataManager extends Singleton {
     private context!: vscode.ExtensionContext;

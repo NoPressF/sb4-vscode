@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
 import { promises as fsp } from 'fs';
+import * as path from 'path';
+import * as vscode from 'vscode';
 
 export interface WebViewHandler {
     command: string;
@@ -61,7 +61,7 @@ export class WebViewManager {
         this.panel!.webview.html = htmlContent;
     }
 
-    public registerMessageHandler(handler: (message: any) => void)    {
+    public registerMessageHandler(handler: (message: any) => void) {
         this.panel?.webview.onDidReceiveMessage(handler);
     }
 
@@ -72,11 +72,6 @@ export class WebViewManager {
     public sendMessage(message: WebViewHandler) {
         this.panel?.webview.postMessage(message);
     }
-
-    public static async readJsonFile(filePath: string): Promise<any> {
-        const fileContent = await fsp.readFile(filePath, 'utf-8');
-        return JSON.parse(fileContent);
-    };
 
     public getFileUri(path: string): vscode.Uri {
         return vscode.Uri.file(path);

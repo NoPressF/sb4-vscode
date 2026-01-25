@@ -1,6 +1,6 @@
-import { LanguageClient } from 'vscode-languageclient/node';
-import { StorageDataManager } from './storage-data-manager';
 import { StorageGetMethod, StorageGetParams, StorageKey, StorageSetMethod, StorageSetParams } from '@shared';
+import { LanguageClient } from 'vscode-languageclient/node';
+import { StorageDataManager } from '../managers/storage-data-manager';
 
 export class StorageDataBridgeEvents {
 	private storageDataManager: StorageDataManager = StorageDataManager.getInstance();

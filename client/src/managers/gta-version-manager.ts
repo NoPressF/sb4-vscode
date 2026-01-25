@@ -1,13 +1,13 @@
 import { isFileExists, Singleton, StorageKey } from '@shared';
+import { XMLParser } from 'fast-xml-parser';
 import { promises as fsp } from 'fs';
 import * as path from 'path';
-import { XMLParser } from 'fast-xml-parser';
-import { StorageDataManager } from '../storage/storage-data-manager';
+import { StorageDataManager } from './storage-data-manager';
 
 export interface GtaVersion {
     label: string;
     identifier: string;
-    fullPath: string;
+    path: string;
 }
 
 export class GtaVersionManager extends Singleton {
@@ -72,7 +72,7 @@ export class GtaVersionManager extends Singleton {
                 const gtaVersion: GtaVersion = {
                     label: parseData.mode?.["@_title"],
                     identifier: parseData.mode?.["@_id"],
-                    fullPath: fullPath
+                    path: fullPath
                 };
 
                 this.GTA_VERSIONS.push(gtaVersion);
@@ -105,13 +105,13 @@ export class GtaVersionManager extends Singleton {
         return versionData.identifier;
     }
 
-    public getFullPath(): string | undefined {
+    public getPath(): string | undefined {
         const versionData = this.getVersionData();
 
         if (!versionData) {
             return undefined;
         }
 
-        return versionData.fullPath;
+        return versionData.path;
     }
 }

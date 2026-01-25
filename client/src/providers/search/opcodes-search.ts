@@ -1,12 +1,11 @@
+import { Command, CommandType, MessageCommand, SEARCH_TYPE, Singleton, StorageKey } from '@shared';
 import * as vscode from 'vscode';
-import { Singleton, StorageKey } from '@shared';
-import { WebViewHandler, WebViewManager } from '../../../managers/webview-manager';
-import { CommandProcessor } from './command-processor';
-import { MessageCommand } from '@shared';
-import { FolderManager } from '../../../managers/folder-manager';
-import { GtaVersionButton } from '../../../components/gta-version-button.component';
-import { StorageDataManager } from '../../../storage/storage-data-manager';
-import { GtaVersionManager } from '../../../gta-version/gta-version-manager';
+import { GtaVersionButton } from '../../components/gta-version-button.component';
+import { CommandManager } from '../../managers/command-manager';
+import { FolderManager } from '../../managers/folder-manager';
+import { GtaVersionManager } from '../../managers/gta-version-manager';
+import { StorageDataManager } from '../../managers/storage-data-manager';
+import { WebViewHandler, WebViewManager } from '../../managers/webview-manager';
 
 export class OpcodesSearch extends Singleton {
     private context!: vscode.ExtensionContext;
@@ -14,7 +13,8 @@ export class OpcodesSearch extends Singleton {
     private folderManager: FolderManager = FolderManager.getInstance();
     private storageDataManager: StorageDataManager = StorageDataManager.getInstance();
     private gtaVersionManager: GtaVersionManager = GtaVersionManager.getInstance();
-    private commandProcessor: CommandProcessor = CommandProcessor.getInstance();
+    private commandManager: CommandManager = CommandManager.getInstance();
+    private commandType: CommandType = CommandType.OPCODE;
 
     public init(context: vscode.ExtensionContext) {
         this.context = context;
@@ -51,7 +51,7 @@ export class OpcodesSearch extends Singleton {
         this.webViewManager.registerMessageHandler(async message => {
             switch (message.command) {
                 case MessageCommand.UPDATE_SEARCH_TYPE:
-                    this.commandProcessor.setSearchType(message.type);
+                    this.commandType = this.getNormalizedSearchType(message.type);
                     await this.updateWebviewContent();
                     break;
             }
@@ -69,7 +69,7 @@ export class OpcodesSearch extends Singleton {
             return;
         }
 
-        const content = await this.getContent();
+        const content = this.getContent();
 
         const message: WebViewHandler = {
             command: 'updateOpcodes',
@@ -80,17 +80,23 @@ export class OpcodesSearch extends Singleton {
         this.webViewManager.sendMessage(message);
     }
 
-    private async getContent(): Promise<string> {
-        const functionsContent = await this.commandProcessor.process();
+    private getContent(): string {
+        const commands: ReadonlyMap<string, Command> = this.commandManager.getCommands();
 
-        return functionsContent
-            .map(({ commandInfo, commandString }) => {
-                if (commandInfo.isUnsupported) {
-                    commandString = `<s>${commandString}</s>`;
+        return Array.from(commands.values())
+            .filter(command => command.format?.[this.commandType] !== undefined)
+            .map((command) => {
+                let commandFormat = command.format?.[this.commandType];
+
+                if (command.attrs?.isUnsupported) {
+                    commandFormat = `<s>${commandFormat}</s>`;
                 }
 
-                return `<div class="opcode-item">${commandString}</div>`;
-            })
-            .join('');
+                return `<div class="opcode-item">${commandFormat}</div>`;
+            }).join('');
+    }
+
+    private getNormalizedSearchType(source: string): CommandType {
+        return SEARCH_TYPE[source];
     }
 }
