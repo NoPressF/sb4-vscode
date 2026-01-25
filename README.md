@@ -42,8 +42,9 @@ After installing the extension, you need to specify the path to the Sanny Builde
 This extension is distributed under the MIT License. For more details, see the [LICENSE](LICENSE) file.
 
 ## Tasks
+- [ ] AST
 - [ ] Semantic tokens
-- [ ] Highlight gxt strings
+- [ ] GXT String (Highlight/hover/auto-completion)
 ---
 
 **Note**: This extension is unofficial and is not affiliated with the developers of Sanny Builder 4.
