@@ -4,25 +4,16 @@
     {
       "label": "build",
       "dependsOn": [
-        "build:client",
-        "build:server"
+        "compile"
       ]
     },
     {
-      "label": "build:client",
+      "label": "compile",
       "type": "npm",
-      "script": "compile:client",
+      "script": "compile",
       "problemMatcher": [
         "$tsc-watch"
       ]
     },
-    {
-      "label": "build:server",
-      "type": "npm",
-      "script": "compile:server",
-      "problemMatcher": [
-        "$tsc"
-      ]
-    }
   ]
 }

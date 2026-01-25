@@ -1,0 +1,45 @@
+import { promises as fsp } from 'fs';
+import * as vscode from 'vscode';
+
+export async function isFileExists(path: string): Promise<boolean> {
+    try {
+        await fsp.access(path);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+export async function readJsonFile(filePath: string): Promise<any> {
+    return JSON.parse(await fsp.readFile(filePath, 'utf-8'));
+};
+
+export function getDottedWordRangeAtPosition(doc: vscode.TextDocument, position: vscode.Position): vscode.Range | null {
+    const line = doc.lineAt(position.line).text;
+    const offset = position.character;
+
+    const isIdentChar = (ch: string) =>
+        /[A-Za-z0-9_]/.test(ch);
+
+    let start = offset;
+    let end = offset;
+
+    while (start > 0 && (isIdentChar(line[start - 1]) || line[start - 1] === '.')) {
+        start--;
+    }
+
+    while (end < line.length && (isIdentChar(line[end]) || line[end] === '.')) {
+        end++;
+    }
+
+    const text = line.slice(start, end);
+
+    if (!text.includes('.')) {
+        return null;
+    }
+
+    return new vscode.Range(
+        new vscode.Position(position.line, start),
+        new vscode.Position(position.line, end)
+    );
+}

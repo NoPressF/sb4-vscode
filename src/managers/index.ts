@@ -1,0 +1,7 @@
+export * from './command-manager';
+export * from './folder-manager';
+export * from './gta-version-manager';
+export * from './html-format-color-manager';
+export * from './language-manager';
+export * from './storage-data-manager';
+export * from './webview-manager';

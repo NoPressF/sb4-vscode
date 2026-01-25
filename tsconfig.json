@@ -7,17 +7,18 @@
 		"baseUrl": ".",
 		"outDir": "dist",
 		"paths": {
-			"@shared": [
-				"shared/src/index.ts"
+			"@utils": [
+				"src/utils/index.ts"
+			],
+			"@managers": [
+				"src/managers/index.ts"
+			],
+			"@providers": [
+				"src/providers/index.ts"
 			]
 		},
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true
-	},
-	"include": [
-		"client",
-		"server",
-		"shared"
-	]
+	}
 }

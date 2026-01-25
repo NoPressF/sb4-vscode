@@ -28,24 +28,8 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./dist/client/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
-    "configuration": {
-      "type": "object",
-      "title": "Sanny Builder 4 Server Config",
-      "properties": {
-        "sannyBuilderServer.trace.server": {
-          "scope": "window",
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off"
-        }
-      }
-    },
     "commands": [
       {
         "command": "sb4.selectFolder",
@@ -110,9 +94,9 @@
     "cleo"
   ],
   "scripts": {
-    "compile:client": "webpack --config webpack.client.config.js --mode production",
-    "compile:server": "webpack --config webpack.server.config.js --mode production",
-    "build": "npm run compile:client && npm run compile:server"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "watch": "tsc -watch -p tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^20.19.28",
@@ -120,17 +104,11 @@
     "@typescript-eslint/eslint-plugin": "^8.52.0",
     "@typescript-eslint/parser": "^8.52.0",
     "eslint": "^9.39.2",
-    "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.104.1",
-    "webpack-cli": "^6.0.1"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
+    "tsc-alias": "^1.8.16",
     "iconv-lite": "^0.7.2",
-    "vscode-languageserver": "^9.0.1",
-    "vscode-languageserver-textdocument": "^1.0.11",
-    "vscode-languageclient": "^9.0.1",
-    "fast-xml-parser": "^5.3.3",
-    "vscode-uri": "^3.1.0"
+    "fast-xml-parser": "^5.3.3"
   }
 }
