@@ -10,7 +10,7 @@ export class OpcodeHoverProvider extends Singleton {
 	public register() {
 		const provider: vscode.HoverProvider = {
 			provideHover: (doc, pos, _token) => {
-				const wordRange = getDottedWordRangeAtPosition(doc, pos);
+				const wordRange = doc.getWordRangeAtPosition(pos);
 				if (!wordRange) {
 					return;
 				}

@@ -31,5 +31,5 @@ export interface Command {
     input?: CommandArgs[];
     output?: CommandArgs[];
     shortDesc: string;
-    attrs?: { isUnsupported?: boolean };
+    attrs?: { isUnsupported?: boolean, isKeyWord?: boolean };
 };

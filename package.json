@@ -2,7 +2,7 @@
   "name": "sb4",
   "displayName": "Sanny Builder 4",
   "description": "Extension that replaces the editor Sanny builder 4",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "EOS",
   "author": "EOS",
   "license": "MIT",
@@ -83,6 +83,19 @@
       {
         "language": "sb",
         "path": "./snippets/snippets.json"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "sb",
+        "scopes": {
+          "class": [
+            "class.sb"
+          ],
+          "method": [
+            "method.sb"
+          ]
+        }
       }
     ]
   },

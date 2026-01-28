@@ -1,5 +1,5 @@
-import { Command, CommandArgs, CommandIO, CommandType, Singleton, VAR_NOTATIONS } from '@utils';
 import { CommandManager, HtmlFormatColorManager } from '@managers';
+import { Command, CommandArgs, CommandIO, CommandType, Singleton, VAR_NOTATIONS } from '@utils';
 
 export class CommandFormatterProvider extends Singleton {
 	private commandManager: CommandManager = CommandManager.getInstance();
@@ -134,7 +134,7 @@ export class CommandFormatterProvider extends Singleton {
 		const { name, type, source } = args;
 
 		const argReturnVar = source ? `${this.htmlFormatColorManager.getOpcodeReturnVarType(this.getNormalizedVar(source))} ` : '';
-		const argName = name ? this.htmlFormatColorManager.getOpcodeArgName(name + ':') : '';
+		const argName = name ? this.htmlFormatColorManager.getOpcodeArgName(name + ': ') : '';
 		const argType = type ? this.htmlFormatColorManager.getOpcodeArgType(type) : '';
 
 		return `[${argReturnVar}${argName}${argType}]`;

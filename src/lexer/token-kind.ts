@@ -1,0 +1,23 @@
+export enum TokenKind {
+	Number,
+	Float,
+	String,
+	Comma,
+	Dot,
+	OpenRoundBracket,
+	CloseRoundBracket,
+	OpenSquareBracket,
+	CloseSquareBracket,
+	Equals,
+	EqualEqual,
+	PlusEquals,
+	MinusEquals,
+	GlobalVar,
+	LocalVar,
+	ArraySize,
+	Identifier,
+	LabelJump,
+	LabelDefine,
+	NewLine,
+	EOF
+};

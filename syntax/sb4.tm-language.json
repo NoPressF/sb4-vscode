@@ -7,38 +7,6 @@
             "name": "operator.sb"
         },
         {
-            "match": "[$@][A-Za-z0-9_]*",
-            "name": "global_variable.sb"
-        },
-        {
-            "match": "\\d+@",
-            "name": "local_variable.sb"
-        },
-        {
-            "match": "(?i)#[A-Z]\\w*",
-            "name": "object.sb"
-        },
-        {
-            "match": "\\b\\d+(\\.\\d+)?\\b",
-            "name": "numeric.sb"
-        },
-        {
-            "match": "\"[^\"]*\"",
-            "name": "quoted.double.sb"
-        },
-        {
-            "match": "'[^']*'",
-            "name": "quoted.single.sb"
-        },
-        {
-            "match": ":[A-Za-z_][A-Za-z0-9_]*",
-            "name": "label.sb"
-        },
-        {
-            "match": "^{\\$[\\w\\d\\s]+}$",
-            "name": "directive.sb"
-        },
-        {
             "match": "//.*",
             "name": "comment.line.sb"
         },
