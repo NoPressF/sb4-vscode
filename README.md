@@ -30,12 +30,14 @@ After installing the extension, you need to specify the path to the Sanny Builde
 ### Compiling a Script
 
 1. Press `Ctrl + Shift + B` or open the Command Palette (`Ctrl + Shift + P`) and type `Compile Script`.
-2. The extension will compile your script using Sanny Builder 4.
+
+### Decompiling a Script
+1. Open the Command Palette (`Ctrl + Shift + P`) and type `Decompile Script`.
 
 ### Search opcodes
 
 1. Press `Ctrl + Alt + 2` or open the Command Palette (`Ctrl + Shift + P`) and type `Search opcodes`.
-2. You can choose one of two display types (``Opcodes and Classes and Members``)
+2. You can choose one of two display types (``Opcodes & Classes/members``)
 
 ## License
 
@@ -43,7 +45,7 @@ This extension is distributed under the MIT License. For more details, see the [
 
 ## Tasks
 - [ ] AST
-- [ ] Semantic tokens
+- [X] Semantic tokens
 - [ ] GXT String (Highlight/hover/auto-completion)
 ---
 
